@@ -7,10 +7,10 @@ Expected Shortfall puts emphasis on the tail of the loss distribution, whereas V
 
 
 # Arguments
-- `returns`:     Vector of asset returns.
-- `α`:           Significance level, e.g. use `0.05` for 95% confidence, or `0.01` for 99% confidence.
-- `method`:      Distribution estimation method: `:historical`, `:gaussian` or `:cornish_fisher`.
-- `multiplier`:  Optional scalar multiplier, i.e. use `√12` to annualize monthly returns, and use `√252` to annualize daily returns.
+- `returns`:        Vector of asset returns.
+- `α`:              Significance level, e.g. use `0.05` for 95% confidence, or `0.01` for 99% confidence.
+- `method`:         Distribution estimation method: `:historical`, `:gaussian` or `:cornish_fisher`.
+- `multiplier`:     Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
 
 # Methods
 - `:historical`:        Historical based on empirical distribution of returns.
@@ -25,13 +25,13 @@ function expected_shortfall(returns, α, method::Symbol; multiplier=1.0)
         # average return below significance level (quantile)
         sorted = sort(returns)
         idx = floor(Int64, length(sorted) * α)
-        return mean(sorted[1:idx]) * multiplier
+        return mean(sorted[1:idx]) * sqrt(multiplier)
     elseif method == :gaussian
         # derivation: http://blog.smaga.ch/expected-shortfall-closed-form-for-normal-distribution/
         q = quantile(Normal(), α)
         μ = mean(returns)
         σ = std(returns; corrected=false)
-        return (μ - σ*pdf(Normal(), q)/α) * multiplier
+        return (μ - σ*pdf(Normal(), q)/α) * sqrt(multiplier)
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
@@ -43,7 +43,7 @@ function expected_shortfall(returns, α, method::Symbol; multiplier=1.0)
         EG2 = -1/α*ϕ * (1 + 1/6*(g^3)*S + 1/72*(g^6 - 9g^4 + 9g^2 + 3)*S^2 + 1/24*(g^4 - 2g^2 - 1)*K)
         μ = mean(returns)
         σ = std(returns; corrected=false)
-        return (μ + σ*EG2) * multiplier
+        return (μ + σ*EG2) * sqrt(multiplier)
     end
 
     throw(ArgumentError("Passed method parameter '$(method)' is invalid, must be one of :historical, :gaussian, :cornish_fisher."))

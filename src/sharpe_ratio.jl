@@ -8,21 +8,21 @@ Calculates the Sharpe Ratio (SR) according to the original definition by William
 
 # Formula
 
-    SR = E[returns - risk_free] / std(returns) * multiplier
+    SR = E[returns - risk_free] / std(returns) * sqrt(multiplier)
 
-    IR = E[asset_returns - benchmark_returns] / std(asset_returns - benchmark_returns) * multiplier
+    IR = E[asset_returns - benchmark_returns] / std(asset_returns - benchmark_returns) * sqrt(multiplier)
 
 # Arguments
-- `returns`:    Vector of asset returns.
-- `multiplier`: Optional scalar multiplier, i.e. use `√12` to annualize monthly returns, and use `√252` to annualize daily returns.
-- `risk_free`:  Optional vector or scalar value denoting the risk-free return(s). Must have same frequency (e.g. daily) as the provided returns.
+- `returns`:        Vector of asset returns.
+- `multiplier`:     Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
+- `risk_free`:      Optional vector or scalar value denoting the risk-free return(s). Must have same frequency (e.g. daily) as the provided returns.
 
 # Source
 - Sharpe, W. F. (1966). "Mutual Fund Performance". Journal of Business.
 - Sharpe, William F. (1994). "The Sharpe Ratio". The Journal of Portfolio Management.
 """
 function sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
-    mean(returns .- risk_free) / std(returns) * multiplier
+    mean(returns .- risk_free) / std(returns) * sqrt(multiplier)
 end
 
 
@@ -34,12 +34,12 @@ Calculates the adjusted Sharpe Ratio introduced by Pezier and White (2006) by pe
 
 # Formula
 
-    ASR = SR*[1 + (S/6)SR - (K-3)/24*SR^2] * multiplier
+    ASR = SR*[1 + (S/6)SR - (K-3)/24*SR^2] * sqrt(multiplier)
 
 # Arguments
-- `returns`:    Vector of asset returns.
-- `multiplier`: Optional scalar multiplier, i.e. use `√12` to annualize monthly returns, and use `√252` to annualize daily returns.
-- `risk_free`:  Optional vector or scalar value denoting the risk-free return(s). Must have same frequency (e.g. daily) as the provided returns.
+- `returns`:        Vector of asset returns.
+- `multiplier`:     Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
+- `risk_free`:      Optional vector or scalar value denoting the risk-free return(s). Must have same frequency (e.g. daily) as the provided returns.
 
 # Source
 - Pezier, Jaques and White, Anthony (2006). The Relative Merits of Investable Hedge Fund Indices and of Funds of Hedge Funds in Optimal Passive Portfolios. ICMA Centre Discussion Papers in Finance.
@@ -49,5 +49,5 @@ function sharpe_ratio_adjusted(returns; multiplier=1.0, risk_free=0.0)
     SR = mean(excess) / std(excess)
     S = skewness(excess)
     K = kurtosis(excess; method=:excess)
-    SR*(1 + (S/6)SR - K/24*SR^2) * multiplier
+    SR*(1 + (S/6)SR - K/24*SR^2) * sqrt(multiplier)
 end

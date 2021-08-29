@@ -73,11 +73,15 @@ rf = parse.(Float64, readlines("data/recon_rf_rets.csv")[2:end])
 @test expected_shortfall(asset_returns, 0.05, :gaussian) ≈ -0.00156905316259027
 @test expected_shortfall(asset_returns, 0.05, :cornish_fisher) ≈ -0.0016287316713825
 
-# @test length(drawdowns(asset_returns)) == 1000
-# @test mean(drawdowns(asset_returns)) ≈ -0.000517982256217951
-# @test std(drawdowns(asset_returns)) ≈ 0.000916577011725993
-#
-# @test mean(drawdowns(asset_returns; geometric=false)) ≈ -0.000418043468523338
-# @test std(drawdowns(asset_returns; geometric=false)) ≈ 0.000757130672676854
+@test length(drawdowns(asset_returns)) == length(asset_returns)
+@test mean(drawdowns(asset_returns)) ≈ -0.000418043468523338
+@test std(drawdowns(asset_returns)) ≈ 0.000757130672676854
+@test mean(drawdowns(asset_returns; geometric=true)) ≈ -0.000517982256217951
+@test std(drawdowns(asset_returns; geometric=true)) ≈ 0.000916577011725993
+
+pnl = [-50, 100, -20, 30, -120, -10, 200, 10, 18, -12, -20, -30, 0];
+@test length(drawdowns_pnl(pnl)) == length(pnl)
+@test mean(drawdowns_pnl(pnl)) ≈ -37.53846153846154
+@test std(drawdowns_pnl(pnl)) ≈ 45.40303841634277
 
 end

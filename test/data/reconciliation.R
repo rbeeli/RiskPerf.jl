@@ -83,15 +83,15 @@ rf <- rnorm(N, mean=0.00001, sd=0.0000001)
 # rf <- sample(c(0.0001, 0.001, -0.0001, 0.0, 0.0002), N, replace=T)
 
 # write to CSV
-write.csv(asset.rets, 'test/data/recon_asset_rets.csv', row.names=F, quote=F)
-write.csv(market.rets, 'test/data/recon_market_rets.csv', row.names=F, quote=F)
-write.csv(rf, 'test/data/recon_rf_rets.csv', row.names=F, quote=F)
+write.csv(asset.rets, 'recon_asset_rets.csv', row.names=F, quote=F)
+write.csv(market.rets, 'recon_market_rets.csv', row.names=F, quote=F)
+write.csv(rf, 'recon_rf_rets.csv', row.names=F, quote=F)
 
 # read again from CSV to have same precision
-asset.rets <- read.csv('test/data/recon_asset_rets.csv')$x
+asset.rets <- read.csv('recon_asset_rets.csv')$x
 asset.prices <- 1 + cumsum(asset.rets)
-market.rets <- read.csv('test/data/recon_market_rets.csv')$x
-rf <- read.csv('test/data/recon_rf_rets.csv')$x
+market.rets <- read.csv('recon_market_rets.csv')$x
+rf <- read.csv('recon_rf_rets.csv')$x
 
 asset.prices.ts <- xts(asset.prices, order.by=dts)
 asset.rets.ts <- xts(asset.rets, order.by=dts)
@@ -172,34 +172,16 @@ print(paste('Return.calculate diff length', length(Return.calculate(asset.prices
 print(paste('Return.calculate diff mean', mean(Return.calculate(asset.prices.ts, method='diff'), na.rm=T)))
 print(paste('Return.calculate diff sd', sd(Return.calculate(asset.prices.ts, method='diff'), na.rm=T)))
 
-dd <- as.vector(Drawdowns(asset.rets.ts))
+# dd_rets <- c(0.05, -0.1, 0.2, -0.5, -0.1, 0.2, 0.3, -0.2, 0.6, 0.8, 0.2, -0.8)
+# dd_rets.ts <- xts(dd_rets, order.by=dts[1:length(dd_rets)])
+# dd <- as.vector(Drawdowns(dd_rets.ts, geometric=F))
+dd <- as.vector(Drawdowns(asset.rets.ts, geometric=F))
 print(paste('Drawdowns length', length(dd)))
 print(paste('Drawdowns mean', mean(dd)))
 print(paste('Drawdowns sd', sd(dd)))
 
-dd <- as.vector(Drawdowns(asset.rets.ts, geometric=F))
+dd <- as.vector(Drawdowns(asset.rets.ts, geometric=T))
 print(paste('Drawdowns geometric mean', mean(dd)))
 print(paste('Drawdowns geometric sd', sd(dd)))
-
-# print(dd[1:10])
-
-#  [1]  0.0 -0.1  0.2 -0.5 -0.1  0.2  0.3 -0.2  0.6  0.8  0.2 -0.8
-#  [1]  0.00000000 -0.10000000  0.00000000 -0.45454545 -0.54545455 -0.36363636
-#  [7] -0.09090909 -0.27272727  0.00000000  0.00000000  0.00000000 -0.33333333
-a <- c(0.0, -0.1, 0.2, -0.5, -0.1, 0.2, 0.3, -0.2, 0.6, 0.8, 0.2, -0.8)
-cumrets <- 1+cumsum(a)
-print(cumrets)
-print(as.vector(cummax(c(1, cumrets))[-1]))
-
-# print(a)
-# print(as.vector(Drawdowns(a, geometric=F)))
-
-#     x <- a
-#     Return.cumulative = 1+cumsum(x)
-#     maxCumulativeReturn = cummax(c(1,Return.cumulative))[-1]
-#     column.drawdown = Return.cumulative/maxCumulativeReturn - 1
-#     print(Return.cumulative)
-#     print(maxCumulativeReturn)
-#     print(column.drawdown)
 
 print('-----------------------------------------------------------')

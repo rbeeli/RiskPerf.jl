@@ -46,9 +46,9 @@ all corporate actions, dividends etc., and b) should be regularly spaced, for ex
 If the parameter `drop_overnight` is set to `true`, overnight returns will be dropped.
 
 # Arguments
-- `dates`:          Vector of `DateTime` objects for prices.
-- `prices`:         Vector of adjusted prices accounting for all corporate actions etc.
-- `drop_overnight`: Boolean value indicating whether to drop overnight returns or not (default=false).
+- `dates`:              Vector of `DateTime` objects for prices.
+- `prices`:             Vector of adjusted prices accounting for all corporate actions etc.
+- `drop_overnight`:     Boolean value indicating whether to drop overnight returns or not (default=false).
 
 # Returns
 Tuple of type `Tuple{Vector{DateTime}, Vector{T}, Vector{Int64}}` with dates, returns and indices of original time series.

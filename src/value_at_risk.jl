@@ -1,13 +1,13 @@
 """
     value_at_risk(returns, confidence, method; multiplier=1.0)
 
-Computes the Value-at-Risk (VaR) for a given significance level `α` based on the chosen estimation method. The VaR value represents the maximum expected loss at a certain significance level `α`. For a more tail-risk focused measure, please see `expected_shortfall`.
+Computes the Value-at-Risk (VaR) for a given significance level `α` based on the chosen estimation method. The VaR value represents the maximum expected loss at a certain significance level `α`. For a more tail-risk focused measure, see `expected_shortfall`.
 
 # Arguments
 - `returns`:     Vector of asset returns.
 - `α`:           Significance level, e.g. use `0.05` for 95% confidence, or `0.01` for 99% confidence.
 - `method`:      Distribution estimation method: `:historical`, `:gaussian` or `:cornish_fisher`.
-- `multiplier`:  Optional scalar multiplier, i.e. use `√12` to annualize monthly returns, and use `√252` to annualize daily returns.
+- `multiplier`:  Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
 
 # Methods
 - `:historical`:        Historical based on empirical distribution of returns.
@@ -21,7 +21,7 @@ Computes the Value-at-Risk (VaR) for a given significance level `α` based on th
 function value_at_risk(returns, α, method::Symbol; multiplier=1.0)
     if method == :historical
         # empirical quantile for VaR estimation
-        return quantile(returns, α) * multiplier
+        return quantile(returns, α) * sqrt(multiplier)
     elseif method == :gaussian
         # parametric Gaussian distribution fit
         μ = mean(returns)
@@ -37,7 +37,7 @@ function value_at_risk(returns, α, method::Symbol; multiplier=1.0)
         z = q + 1/6*(q^2-1)S + 1/24*(q^3-3q)*K - 1/36*(2q^3-5q)*S^2
         μ = mean(returns)
         σ = std(returns; corrected=false)
-        return (μ + z*σ) * multiplier
+        return (μ + z*σ) * sqrt(multiplier)
     end
 
     throw(ArgumentError("Passed method parameter '$(method)' is invalid, must be one of :historical, :gaussian, :cornish_fisher."))

@@ -10,7 +10,7 @@ Calculates the Treynor ratio as the ratio of excess return divided by the CAPM b
 # Arguments
 - `asset_returns`:      Vector of asset returns.
 - `benchmark_returns`:  Vector of benchmark returns (e.g. market portfolio returns).
-- `multiplier`:         Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns. Note that most other measures scale with √, but this ratio not.
+- `multiplier`:         Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
 - `risk_free`:          Optional vector or scalar value denoting the risk-free return(s). Must have same frequency (e.g. daily) as the provided returns.
 """
 function treynor_ratio(asset_returns, benchmark_returns; multiplier=1.0, risk_free=0.0)

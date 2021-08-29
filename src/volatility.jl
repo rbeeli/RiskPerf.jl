@@ -5,7 +5,7 @@ Calculates the volatility based on the standard deviation of the returns. The op
 
 # Formula
 
-    Vol = std(returns) * multiplier
+    Vol = std(returns) * sqrt(multiplier)
 
 # Arguments
 - `returns`:    Vector of asset returns (usually log-returns).

@@ -49,7 +49,7 @@ rf = parse.(Float64, readlines("data/recon_rf_rets.csv")[2:end])
 
 @test sharpe_ratio(asset_returns) ≈ 0.511256629034303
 @test sharpe_ratio(asset_returns; risk_free=rf) ≈ 0.501375462696111
-@test sharpe_ratio_adjusted(asset_returns) ≈ 0.5069731154546914  # slightly different to R's PerformanceAnalytics due to their annualization (0.506476646827294)
+@test adjusted_sharpe_ratio(asset_returns) ≈ 0.5069731154546914  # slightly different to R's PerformanceAnalytics due to their annualization (0.506476646827294)
 
 @test sortino_ratio(asset_returns) ≈ 1.10000435875069
 @test sortino_ratio(asset_returns; MAR=rf) ≈ 1.0692077438794
@@ -61,6 +61,12 @@ rf = parse.(Float64, readlines("data/recon_rf_rets.csv")[2:end])
 α2, β2 = capm(asset_returns, market_returns; risk_free=rf)
 @test α2 ≈ 0.000502715256287843
 @test β2 ≈ 0.037019963055605
+
+γ = jensen_alpha(asset_returns, market_returns; risk_free=rf)
+@test γ ≈ α2
+
+γ = modified_jensen(asset_returns, market_returns; risk_free=rf)
+@test γ ≈ α2/β2
 
 @test treynor_ratio(asset_returns, market_returns) ≈ 0.013976666292467
 @test treynor_ratio(asset_returns, market_returns; risk_free=rf) ≈ 0.0137061068404259
@@ -83,5 +89,21 @@ pnl = [-50, 100, -20, 30, -120, -10, 200, 10, 18, -12, -20, -30, 0];
 @test length(drawdowns_pnl(pnl)) == length(pnl)
 @test mean(drawdowns_pnl(pnl)) ≈ -37.53846153846154
 @test std(drawdowns_pnl(pnl)) ≈ 45.40303841634277
+
+
+
+# https://breakingdownfinance.com/finance-topics/modern-portfolio-theory/marginal-contribution-to-risk-mctr/
+w = [0.042, 0.25, 0.32, 0.22, 0.168]
+covmat = [
+    0.001369 0.001184 0.000161 0.001924 0.002886;
+    0.001184 0.006400 0.000580 0.008840 0.006240;
+    0.000161 0.000580 0.000841 0.001885 0.001131;
+    0.001924 0.008840 0.001885 0.016900 0.003380;
+    0.002886 0.006240 0.001131 0.003380 0.067600
+]
+ctb = risk_contribution(w, covmat)
+
+@test all(isapprox.(ctb, [0.009944 0.217649 0.059174 0.284805 0.428427]'; rtol=0.0001))
+
 
 end

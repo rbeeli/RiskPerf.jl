@@ -6,6 +6,17 @@
 
 
 
+# using CSV
+# using DataFrames
+#
+# path = "/home/rino/Dropbox/portfolio_opt_matthias/sp500_2000-2020.csv"
+#
+# df = DataFrame(CSV.File(path; header=1, delim=","));
+# prices = df[:, 2:12];
+# returns = prices[2:end, :] ./ prices[1:end-1, :] .- 1.0;
+# returns = Matrix(returns);
+# covariance_matrix = cov(returns);
+
 
 
 

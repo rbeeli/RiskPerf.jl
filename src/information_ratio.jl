@@ -12,7 +12,7 @@ This function calculates the Information Ratio as the active return divided by t
 - `benchmark_returns`:  Vector or scalar value of benchmark returns having same same frequency (e.g. daily) as the provided returns.
 - `multiplier`:         Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
 
-# Source
+# Sources
 - Sharpe, William F. (1994). "The Sharpe Ratio". The Journal of Portfolio Management.
 """
 function information_ratio(asset_returns, benchmark_returns; multiplier=1.0)

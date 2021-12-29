@@ -6,9 +6,9 @@ Calculates the Sortino Ratio, a downside risk-adjusted performance measure. Cont
 # Arguments
 - `returns`:        Vector of asset returns.
 - `multiplier`:     Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
-- `MAR`:            Optional vector or scalar value denoting the minimum acceptable return(s). Must have same frequency (e.g. daily) as the provided returns.
+- `MAR`:            Optional vector or scalar value denoting the minimum acceptable return(s). Must have same frequency as the provided returns, e.g. daily.
 
-# Source
+# Sources
 - Sortino, F. and Price, L. (1996). Performance Measurement in a Downside Risk Framework. Journal of Investing.
 """
 function sortino_ratio(returns; multiplier=1.0, MAR=0.0)

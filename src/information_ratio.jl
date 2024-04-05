@@ -5,7 +5,7 @@ This function calculates the Information Ratio as the active return divided by t
 
 # Formula
 
-    IR = E[asset_returns - benchmark_returns] / std(asset_returns - benchmark_returns) * sqrt(multiplier)
+``\\text{IR} = \\dfrac{\\mathbb{E}\\left[\\text{asset\\_returns} - \\text{benchmark\\_returns} \\right]}{\\sigma(\\text{asset\\_returns} - \\text{benchmark\\_returns})} \\times \\sqrt{\\text{multiplier}}``
 
 # Arguments
 - `asset_returns`:      Vector of asset returns.

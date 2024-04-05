@@ -5,7 +5,7 @@ Calculates the CAPM α and β coefficients based on sample covariance statistics
 
 The linear regression model looks as follows:
 
-        r_a - r_f = α + β(r_b - r_f) + ϵ
+``r_a - r_f = α + β(r_b - r_f) + ϵ``
 
 The α coefficient in this model is also known as Jensen's alpha. β is the slope coefficient, and ϵ is an error term.
 

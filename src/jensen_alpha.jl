@@ -19,8 +19,6 @@ function jensen_alpha(asset_returns, benchmark_returns; risk_free=0.0)
     α
 end
 
-
-
 """
     modified_jensen(asset_returns, benchmark_returns; risk_free=0.0)
 

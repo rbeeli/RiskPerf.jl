@@ -5,7 +5,7 @@ This function calculates the Omega ratio.
 
 # Formula
 
-    E[max(returns - target_return, 0)] / E[max(target_return - returns, 0)]
+``\\Omega = -\\dfrac{ \\mathbb{E}\\left[ \\text{max}(\\text{returns} - \\text{target\\_return}, 0) \\right] }{ \\mathbb{E}\\left[ \\text{min}(\\text{target\\_return} - \\text{returns}, 0) \\right] }``
 
 # Arguments
 - `returns`:        Vector of asset returns.
@@ -13,7 +13,7 @@ This function calculates the Omega ratio.
 """
 function omega_ratio(returns, target_return)
     excess = returns .- target_return
-    sum1 = sum(map(x -> max(0.0, x), excess))
-    sum2 = -sum(map(x -> min(0.0, x), excess))
-    sum1 / sum2
+    gains = sum(map(x -> max(0.0, x), excess))
+    losses = -sum(map(x -> min(0.0, x), excess))
+    gains / losses
 end

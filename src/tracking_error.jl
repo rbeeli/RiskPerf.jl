@@ -5,7 +5,7 @@ Calculates the ex-post Tracking Error based on the standard deviation of the act
 
 # Formula
 
-    TE = std(asset_returns - benchmark_returns) * sqrt(multiplier)
+``\\text{TE} = \\sigma\\left( \\text{asset\\_returns} - \\text{benchmark\\_returns} \\right) \\times \\sqrt{\\text{multiplier}}``
 
 # Arguments
 - `asset_returns`:      Vector of asset returns.

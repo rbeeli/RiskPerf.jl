@@ -1,6 +1,5 @@
 # https://oxfordstrat.com/coasdfASD32/uploads/2016/03/How-Sharp-Is-the-Sharpe-Ratio.pdf
 
-
 """
     sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
 
@@ -8,9 +7,9 @@ Calculates the Sharpe Ratio (SR) according to the original definition by William
 
 # Formula
 
-    SR = E[returns - risk_free] / std(returns) * sqrt(multiplier)
+``\\text{SR} = \\dfrac{\\mathbb{E}\\left[\\text{returns} - \\text{risk\\_free} \\right]}{\\sigma(\\text{returns})} \\times \\sqrt{\\text{multiplier}}``
 
-    IR = E[asset_returns - benchmark_returns] / std(asset_returns - benchmark_returns) * sqrt(multiplier)
+``\\text{IR} = \\dfrac{\\mathbb{E}\\left[\\text{asset\\_returns} - \\text{benchmark\\_returns} \\right]}{\\sigma(\\text{asset\\_returns} - \\text{benchmark\\_returns})} \\times \\sqrt{\\text{multiplier}}``
 
 # Arguments
 - `returns`:        Vector of asset returns.
@@ -25,8 +24,6 @@ function sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
     mean(returns .- risk_free) / std(returns) * sqrt(multiplier)
 end
 
-
-
 """
     adjusted_sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
 
@@ -34,7 +31,9 @@ Calculates the adjusted Sharpe Ratio introduced by Pezier and White (2006) by pe
 
 # Formula
 
-    ASR = SR*[1 + (S/6)SR - (K-3)/24*SR^2] * sqrt(multiplier)
+``\\text{SR} = \\dfrac{\\mathbb{E}\\left[ \\text{returns} - \\text{risk\\_free}\\right ]}{\\sigma(\\text{returns} - \\text{risk\\_free})}``
+
+``\\text{ASR} = \\text{SR} \\left[1 + \\frac{S}{6}\\text{SR} - \\frac{K-3}{24}\\text{SR}^2\\right] \\times \\sqrt{\\text{multiplier}}``
 
 # Arguments
 - `returns`:        Vector of asset returns.

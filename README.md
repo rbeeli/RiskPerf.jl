@@ -1,19 +1,21 @@
 # RiskPerf.jl
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+![Maintenance](https://img.shields.io/maintenance/yes/2024)
+[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://rbeeli.github.io/RiskPerf.jl/docs/build/index.html)
 
 Quantitative risk and performance analysis package for financial time series powered by the Julia language.
 
 This package was inspired by the **R** package [`PerformanceAnalytics`](https://cran.r-project.org/web/packages/PerformanceAnalytics/index.html) of Peter Carl and Brian G. Peterson.
 
 
-## Functions
+## Documentation
+
+Full documentation is available [here](https://rbeeli.github.io/RiskPerf.jl/docs/build/index.html).
+
+### Functions
 
 ```julia
-log_returns(prices::Vector)
-
-log_returns(prices::Matrix)
-
 simple_returns(prices::Vector)
 
 simple_returns(prices::Matrix)
@@ -23,6 +25,10 @@ simple_returns(
     prices          ::Vector{T};
     drop_overnight  ::Bool=false
 )
+
+log_returns(prices::Vector)
+
+log_returns(prices::Matrix)
 
 volatility(returns; multiplier=1.0)
 
@@ -44,7 +50,7 @@ kurtosis(x; method::Symbol=:excess)
 
 omega_ratio(returns, target_return)
 
-risk_contribution(weights, covariance_matrix)
+relative_risk_contribution(weights, covariance_matrix)
 
 sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
 

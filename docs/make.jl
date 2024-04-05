@@ -1,12 +1,12 @@
 push!(LOAD_PATH,"../src/")
 
 using Documenter
-using fastback
+using RiskPerf
 
 makedocs(
-    sitename = "fastback",
-    format = Documenter.HTML(prettyurls=false),
-    modules = [fastback]
+    sitename = "RiskPerf.jl",
+    # format = Documenter.HTML(prettyurls=false),
+    # modules = [RiskPerf]
 )
 
 # Documenter can also automatically deploy documentation to gh-pages.

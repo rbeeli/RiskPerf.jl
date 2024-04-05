@@ -101,7 +101,7 @@ covmat = [
     0.001924 0.008840 0.001885 0.016900 0.003380;
     0.002886 0.006240 0.001131 0.003380 0.067600
 ]
-ctb = risk_contribution(w, covmat)
+ctb = relative_risk_contribution(w, covmat)
 
 @test all(isapprox.(ctb, [0.009944 0.217649 0.059174 0.284805 0.428427]'; rtol=0.0001))
 

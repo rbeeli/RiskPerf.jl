@@ -19,8 +19,6 @@ function drawdowns(returns; geometric::Bool=false)
     returns ./ returns_max .- 1.0
 end
 
-
-
 """
     drawdowns_pnl(pnl)
 

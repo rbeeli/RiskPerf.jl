@@ -1,7 +1,8 @@
 """
     upside_potential_ratio(returns, threshold; method=:partial)
 
-The Upside Potential Ratio is a risk-adjusted performance measure similarly to the Sharpe Ratio and the Sortino Ratio. This ratio considers only upside returns (above `threshold`) in the numerator, and only downside returns (below `threshold`) in the denominator (see `downside_deviation`).
+The Upside Potential Ratio is a risk-adjusted performance measure similarly to the Sharpe Ratio and the Sortino Ratio.
+This ratio considers only upside returns (above `threshold`) in the numerator, and only downside returns (below `threshold`) in the denominator (see `downside_deviation`).
 
 # Arguments
 - `returns`:     Vector of asset returns.
@@ -19,7 +20,6 @@ function upside_potential_ratio(returns, threshold; method::Symbol=:partial)
     else
         throw(ArgumentError("Passed method parameter '$(method)' is invalid, must be one of :full, :partial."))
     end
-
     dd = downside_deviation(returns, threshold; method=method)
     excess = returns .- threshold
     (sum(map(x -> max(0.0, x), excess)) / n) / dd

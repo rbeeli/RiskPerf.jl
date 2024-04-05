@@ -34,8 +34,6 @@ function skewness(x; method::Symbol=:moment)
     throw(ArgumentError("Passed method parameter '$(method)' is invalid, must be one of :moment, :fisher_pearson, :sample."))
 end
 
-
-
 """
     kurtosis(x; method=:excess)
 
@@ -69,8 +67,6 @@ function kurtosis(x; method::Symbol=:excess)
     throw(ArgumentError("Passed method parameter '$(method)' is invalid, must be one of :excess, :moment, :cornish_fisher."))
 end
 
-
-
 """
     lower_partial_moment(returns, threshold, n, method)
 
@@ -81,6 +77,12 @@ This function calculates the Lower Partial Moment (LPM) for a given threshold.
 - `threshold`:   Scalar value or vector denoting the threshold returns.
 - `n`:           `n`-th moment to calculate.
 - `method`:      One of `:full` or `:partial`. Indicates whether to use the number of all returns (`:full`), or only the number of returns below the threshold (`:partial`) in the denominator.
+
+# Formula
+    
+``\\text{LPM}_n = \\frac{1}{D} \\sum_{i=1}^N \\max(0, \\text{threshold} - \\text{returns}_i)^n``
+
+where `N` is the number of returns, and `D` is the denominator.
 """
 function lower_partial_moment(returns, threshold, n, method::Symbol)
     if method == :full
@@ -94,8 +96,6 @@ function lower_partial_moment(returns, threshold, n, method::Symbol)
     sum(map(x -> max(0.0, x)^n, excess)) / denominator
 end
 
-
-
 """
     higher_partial_moment(returns, threshold, n, method)
 
@@ -106,6 +106,12 @@ This function calculates the Higher Partial Moment (HPM) for a given threshold.
 - `threshold`:   Scalar value or vector denoting the threshold returns.
 - `n`:           `n`-th moment to calculate.
 - `method`:      One of `:full` or `:partial`. Indicates whether to use the number of all returns (`:full`), or only the number of returns above the threshold (`:partial`) in the denominator.
+
+# Formula
+
+``\\text{HPM}_n = \\frac{1}{D} \\sum_{i=1}^N \\max(0, \\text{returns}_i - \\text{threshold})^n``
+
+where `N` is the number of returns, and `D` is the denominator.
 """
 function higher_partial_moment(returns, threshold, n, method::Symbol)
     if method == :full

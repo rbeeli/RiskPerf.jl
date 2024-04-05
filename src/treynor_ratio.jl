@@ -1,11 +1,12 @@
 """
     treynor_ratio(asset_returns, benchmark_returns; multiplier=1.0, risk_free=0.0)
 
-Calculates the Treynor ratio as the ratio of excess return divided by the CAPM beta. This ratio is similar to the Sharpe Ratio, but instead of dividing by the volatility, we devide by the CAPM beta as risk proxy.
+Calculates the Treynor ratio as the ratio of excess return divided by the CAPM beta.
+This ratio is similar to the Sharpe Ratio, but instead of dividing by the volatility, we devide by the CAPM beta as risk proxy.
 
 # Formula
 
-    TR = E[asset_returns - risk_free] / beta * multiplier
+``\\text{TR} = \\dfrac{ \\mathbb{E}\\left[ \\text{asset\\_returns} - \\text{risk\\_free} \\right]}{\\beta} \\times \\text{multiplier}``
 
 # Arguments
 - `asset_returns`:      Vector of asset returns.

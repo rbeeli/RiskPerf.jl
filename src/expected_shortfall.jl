@@ -17,7 +17,7 @@ Expected Shortfall puts emphasis on the tail of the loss distribution, whereas V
 # Methods
 - `:historical`:        Historical based on empirical distribution of returns.
 - `:gaussian`:          Gaussian distribution based on parametric fit (mean, variance).
-- `:cornish_fisher`:    Cornish-Fisher based on Gaussian parametric distribution fit adjusted for third and fourth moments (skewness, kurtosis). Cornish-Fisher expansion aims to approximate the quantile of a true distribution by using higher moments (skewness and kurtosis) of that distribution to adjust for its non-normality. See https://thema.u-cergy.fr/IMG/pdf/2017-21.pdf for details.
+- `:cornish_fisher`:    Cornish-Fisher based on Gaussian parametric distribution fit adjusted for third and fourth moments (skewness, kurtosis). Cornish-Fisher expansion aims to approximate the quantile of a true distribution by using higher moments (skewness and kurtosis) of that distribution to adjust for its non-normality. See [https://thema.u-cergy.fr/IMG/pdf/2017-21.pdf](https://thema.u-cergy.fr/IMG/pdf/2017-21.pdf) for details.
 
 # Sources
 - Amédée-Manesme, Charles-Olivier and Barthélémy, Fabrice and Maillard, Didier (2017). Computation of the Corrected Cornish–Fisher Expansion using the Response Surface Methodology: Application to VaR and CVaR. THEMA Working Paper n°2017-21, Université de Cergy-Pontoise, France.

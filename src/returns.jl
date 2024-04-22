@@ -15,9 +15,6 @@ where ``r_t`` is the return at time ``t``, ``P_t`` is the price at time ``t``, a
 - `drop_first`: Boolean value indicating whether to drop the first return or not (default=false).
 - `first_value`: Value to be used for the first return if `drop_first=false`.
 
-# Returns
-Vector of simple returns with size `N-1`.
-
 # Examples
 ```jldoctest
 julia> using RiskPerf
@@ -136,9 +133,6 @@ for example hourly or daily data.
 
 where ``r_{t, i}`` is the return at time ``t`` for asset ``i``, ``P_{t, i}`` is the price at time ``t`` for asset ``i``, and ``P_{t-1, i}`` is the price at time ``t-1`` for asset ``i``.
 
-# Returns
-Matrix of simple returns with size `[(N-1) x k]`.
-
 # Examples
 ```jldoctest
 julia> using RiskPerf
@@ -198,9 +192,6 @@ Please note that the provided prices series should be regularly spaced, for exam
 ``r_t = \\log\\left(\\dfrac{P_t}{P_{t-1}}\\right)``
 
 where ``r_t`` is the return at time ``t``, ``P_t`` is the price at time ``t``, and ``P_{t-1}`` is the price at time ``t-1``.
-
-# Returns
-Vector of log-returns with size `N-1`.
 
 # Examples
 ```jldoctest
@@ -262,9 +253,6 @@ Please note that the provided prices series should be regularly spaced, for exam
 ``r_{t, i} = \\log\\left(\\dfrac{P_{t, i}}{P_{t-1, i}}\\right)``
 
 where ``r_{t, i}`` is the return at time ``t`` for asset ``i``, ``P_{t, i}`` is the price at time ``t`` for asset ``i``, and ``P_{t-1, i}`` is the price at time ``t-1`` for asset ``i``.
-
-# Returns
-Matrix of log-returns with size `[(N-1) x k]`.
 
 # Examples
 ```jldoctest

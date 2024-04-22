@@ -6,9 +6,6 @@
 
 Quantitative risk and performance analysis package for financial time series powered by the Julia language.
 
-This package was inspired by the **R** package [`PerformanceAnalytics`](https://cran.r-project.org/web/packages/PerformanceAnalytics/index.html) of Peter Carl and Brian G. Peterson.
-
-
 ## Documentation
 
 Full documentation is available [here](https://rbeeli.github.io/RiskPerf.jl/docs/build/index.html).
@@ -16,19 +13,13 @@ Full documentation is available [here](https://rbeeli.github.io/RiskPerf.jl/docs
 ### Functions
 
 ```julia
-simple_returns(prices::Vector)
+simple_returns(prices::AbstractVector; drop_first=false, first_value=NaN)
 
-simple_returns(prices::Matrix)
+simple_returns(prices::AbstractMatrix; drop_first=false, first_value=NaN)
 
-simple_returns(
-    dates           ::Vector{DateTime},
-    prices          ::Vector{T};
-    drop_overnight  ::Bool=false
-)
+log_returns(prices::AbstractVector; drop_first=false, first_value=NaN)
 
-log_returns(prices::Vector)
-
-log_returns(prices::Matrix)
+log_returns(prices::AbstractMatrix; drop_first=false, first_value=NaN)
 
 volatility(returns; multiplier=1.0)
 
@@ -76,3 +67,7 @@ lower_partial_moment(returns, threshold, n, method::Symbol)
 
 higher_partial_moment(returns, threshold, n, method::Symbol)
 ```
+
+## Acknowledgements
+
+This package was inspired by the **R** package [`PerformanceAnalytics`](https://cran.r-project.org/web/packages/PerformanceAnalytics/index.html) of Peter Carl and Brian G. Peterson.

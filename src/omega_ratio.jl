@@ -2,6 +2,7 @@
     omega_ratio(returns, target_return)
 
 This function calculates the Omega ratio.
+Note that the ratio returns `Inf` if all returns are greater or equal to the target return.
 
 # Formula
 

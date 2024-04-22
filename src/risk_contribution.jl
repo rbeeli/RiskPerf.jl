@@ -5,7 +5,8 @@ using LinearAlgebra
 
 # Formula
 
-The relative risk contribution (RRC) is defined as the ratio of its RC to the total portfolio risk ``\\sigma(w)``:
+The relative risk contribution (`RRC`) of an asset is defined as the ratio of
+the asset's risk contribution `RC` to the total portfolio risk ``\\sigma(w)``:
 
 ``\\text{RRC}_i = \\frac{\\text{RC}_i}{\\sigma(w)} = \\frac{w_i(\\Sigma w)_i}{w^T\\Sigma w}``
 

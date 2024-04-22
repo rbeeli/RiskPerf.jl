@@ -1,6 +1,6 @@
 name = "RiskPerf"
 uuid = "9166ba07-fd5b-44b6-9936-7aa4238d27f8"
-authors = ["Rino Beeli <rino.beeli@gmail.com>"]
+authors = ["Rino Beeli <40661605+rbeeli@users.noreply.github.com>"]
 repo = "https://github.com/rbeeli/RiskPerf.jl.git"
 version = "0.1.0"
 

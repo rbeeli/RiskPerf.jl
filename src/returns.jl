@@ -43,7 +43,7 @@ julia> simple_returns(prices; drop_first=true)
   0.01503006012024044
 ```
 """
-@inline function simple_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractVector
+function simple_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractVector
     if drop_first
         a = @view prices[2:end]
         b = @view prices[1:end-1]
@@ -161,7 +161,7 @@ julia> simple_returns(prices; drop_first=true)
   0.0150301    0.00806452
 ```
 """
-@inline function simple_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractMatrix
+function simple_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractMatrix
     if drop_first
         a = @view prices[2:end, :]
         b = @view prices[1:end-1, :]
@@ -221,7 +221,7 @@ julia> log_returns(prices; drop_first=true)
   0.014918227937219366
 ```
 """
-@inline function log_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractVector
+function log_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractVector
     if drop_first
         a = @view prices[2:end]
         b = @view prices[1:end-1]
@@ -282,7 +282,7 @@ julia> log_returns(prices; drop_first=true)
   0.0149182    0.00803217
 ```
 """
-@inline function log_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractMatrix
+function log_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractMatrix
     if drop_first
         a = @view prices[2:end, :]
         b = @view prices[1:end-1, :]

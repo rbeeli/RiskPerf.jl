@@ -5,6 +5,7 @@ Quantitative risk and performance analysis package for financial time series pow
 ## Index
 
 ```@index
+
 ```
 
 ## Functions
@@ -16,7 +17,7 @@ Order   = [:function, :type]
 
 ## Bug reports and feature requests
 
-Please report any issues via the GitHub issue tracker.
+Please report any issues via the [GitHub issue tracker](https://github.com/rbeeli/RiskPerf.jl/issues).
 
 ## Acknowledgements
 

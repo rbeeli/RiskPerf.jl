@@ -68,6 +68,10 @@ lower_partial_moment(returns, threshold, n, method::Symbol)
 higher_partial_moment(returns, threshold, n, method::Symbol)
 ```
 
+## Bug reports and feature requests
+
+Please report any issues via the [GitHub issue tracker](https://github.com/rbeeli/RiskPerf.jl/issues).
+
 ## Acknowledgements
 
 This package was inspired by the **R** package [`PerformanceAnalytics`](https://cran.r-project.org/web/packages/PerformanceAnalytics/index.html) of Peter Carl and Brian G. Peterson.

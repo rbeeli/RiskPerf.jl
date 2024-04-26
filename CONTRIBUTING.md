@@ -4,14 +4,13 @@ Pull requests and issues are welcome.
 
 ## TODOs
 
-## New features
-
 - marginal risk contribution
   - https://cran.r-project.org/web/packages/riskParityPortfolio/vignettes/slides-ConvexOptimizationCourseHKUST.pdf page 31
-- add support for working with DataFrame
+- add support for working with DataFrame / Tables.jl
   - returns calculations
 - add more drawdown measures (page 88+)
 - Kelly criterion and maybe more advanced versions
+- Annualized return calculation
 
 ## Building documentation
 

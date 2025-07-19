@@ -1,8 +1,33 @@
 module RiskPerf
 
-using Dates
-using Statistics
-using Distributions
+import Statistics: mean, std, quantile
+import Distributions: Normal, pdf
+
+export adjusted_sharpe_ratio,
+    capm,
+    drawdowns,
+    drawdowns_pnl,
+    downside_deviation,
+    expected_shortfall,
+    higher_partial_moment,
+    information_ratio,
+    jensen_alpha,
+    kurtosis,
+    log_returns,
+    lower_partial_moment,
+    modified_jensen,
+    omega_ratio,
+    relative_risk_contribution,
+    sharpe_ratio,
+    simple_returns,
+    skewness,
+    sortino_ratio,
+    tracking_error,
+    treynor_ratio,
+    upside_deviation,
+    upside_potential_ratio,
+    value_at_risk,
+    volatility
 
 include("returns.jl")
 include("moments.jl")
@@ -21,12 +46,5 @@ include("expected_shortfall.jl")
 include("upside_potential_ratio.jl")
 include("drawdowns.jl")
 include("risk_contribution.jl")
-
-# export all
-for n in names(@__MODULE__; all=true)
-    if Base.isidentifier(n) && n ∉ (Symbol(@__MODULE__), :eval, :include)
-        @eval export $n
-    end
-end
 
 end # module RiskPerf

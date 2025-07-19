@@ -33,20 +33,32 @@ function expected_shortfall(returns, α, method::Symbol; multiplier=1.0)
         q = quantile(Normal(), α)
         μ = mean(returns)
         σ = std(returns; corrected=false)
-        return (μ - σ*pdf(Normal(), q)/α) * sqrt(multiplier)
+        return (μ - σ * pdf(Normal(), q) / α) * sqrt(multiplier)
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
         q = quantile(Normal(), α)
         S = skewness(returns)
         K = kurtosis(returns; method=:excess)
-        g = q + 1/6*(q^2-1)S + 1/24*(q^3-3q)*K - 1/36*(2q^3-5q)*S^2
+        g = q + 1 / 6 * (q^2 - 1)S + 1 / 24 * (q^3 - 3q) * K - 1 / 36 * (2q^3 - 5q) * S^2
         ϕ = pdf(Normal(), g)
-        EG2 = -1/α*ϕ * (1 + 1/6*(g^3)*S + 1/72*(g^6 - 9g^4 + 9g^2 + 3)*S^2 + 1/24*(g^4 - 2g^2 - 1)*K)
+        EG2 =
+            -1 / α *
+            ϕ *
+            (
+                1 +
+                1 / 6 * (g^3) * S +
+                1 / 72 * (g^6 - 9g^4 + 9g^2 + 3) * S^2 +
+                1 / 24 * (g^4 - 2g^2 - 1) * K
+            )
         μ = mean(returns)
         σ = std(returns; corrected=false)
-        return (μ + σ*EG2) * sqrt(multiplier)
+        return (μ + σ * EG2) * sqrt(multiplier)
     end
 
-    throw(ArgumentError("Passed method parameter '$(method)' is invalid, must be one of :historical, :gaussian, :cornish_fisher."))
+    throw(
+        ArgumentError(
+            "Passed method parameter '$(method)' is invalid, must be one of :historical, :gaussian, :cornish_fisher.",
+        ),
+    )
 end

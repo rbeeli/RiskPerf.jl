@@ -18,7 +18,11 @@ function upside_potential_ratio(returns, threshold; method::Symbol=:partial)
     elseif method == :partial
         n = count(returns .> threshold)
     else
-        throw(ArgumentError("Passed method parameter '$(method)' is invalid, must be one of :full, :partial."))
+        throw(
+            ArgumentError(
+                "Passed method parameter '$(method)' is invalid, must be one of :full, :partial."
+            ),
+        )
     end
     dd = downside_deviation(returns, threshold; method=method)
     excess = returns .- threshold

@@ -34,11 +34,15 @@ function value_at_risk(returns, α, method::Symbol; multiplier=1.0)
         q = quantile(Normal(), α)
         S = skewness(returns)
         K = kurtosis(returns; method=:excess)
-        z = q + 1/6*(q^2-1)S + 1/24*(q^3-3q)*K - 1/36*(2q^3-5q)*S^2
+        z = q + 1 / 6 * (q^2 - 1)S + 1 / 24 * (q^3 - 3q) * K - 1 / 36 * (2q^3 - 5q) * S^2
         μ = mean(returns)
         σ = std(returns; corrected=false)
-        return (μ + z*σ) * sqrt(multiplier)
+        return (μ + z * σ) * sqrt(multiplier)
     end
 
-    throw(ArgumentError("Passed method parameter '$(method)' is invalid, must be one of :historical, :gaussian, :cornish_fisher."))
+    throw(
+        ArgumentError(
+            "Passed method parameter '$(method)' is invalid, must be one of :historical, :gaussian, :cornish_fisher.",
+        ),
+    )
 end

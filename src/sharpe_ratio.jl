@@ -48,5 +48,5 @@ function adjusted_sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
     SR = mean(excess) / std(excess)
     S = skewness(excess)
     K = kurtosis(excess; method=:excess)
-    SR*(1 + (S/6)SR - K/24*SR^2) * sqrt(multiplier)
+    SR * (1 + (S / 6)SR - K / 24 * SR^2) * sqrt(multiplier)
 end

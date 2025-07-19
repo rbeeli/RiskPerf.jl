@@ -66,7 +66,7 @@ rf = parse.(Float64, readlines("data/recon_rf_rets.csv")[2:end])
 @test γ ≈ α2
 
 γ = modified_jensen(asset_returns, market_returns; risk_free=rf)
-@test γ ≈ α2/β2
+@test γ ≈ α2 / β2
 
 @test treynor_ratio(asset_returns, market_returns) ≈ 0.013976666292467
 @test treynor_ratio(asset_returns, market_returns; risk_free=rf) ≈ 0.0137061068404259
@@ -85,25 +85,22 @@ rf = parse.(Float64, readlines("data/recon_rf_rets.csv")[2:end])
 @test mean(drawdowns(asset_returns; geometric=true)) ≈ -0.000517982256217951
 @test std(drawdowns(asset_returns; geometric=true)) ≈ 0.000916577011725993
 
-pnl = [-50, 100, -20, 30, -120, -10, 200, 10, 18, -12, -20, -30, 0];
+pnl = [-50, 100, -20, 30, -120, -10, 200, 10, 18, -12, -20, -30, 0]
 @test length(drawdowns_pnl(pnl)) == length(pnl)
 @test mean(drawdowns_pnl(pnl)) ≈ -37.53846153846154
 @test std(drawdowns_pnl(pnl)) ≈ 45.40303841634277
 
-
-
 # https://breakingdownfinance.com/finance-topics/modern-portfolio-theory/marginal-contribution-to-risk-mctr/
 w = [0.042, 0.25, 0.32, 0.22, 0.168]
 covmat = [
-    0.001369 0.001184 0.000161 0.001924 0.002886;
-    0.001184 0.006400 0.000580 0.008840 0.006240;
-    0.000161 0.000580 0.000841 0.001885 0.001131;
-    0.001924 0.008840 0.001885 0.016900 0.003380;
+    0.001369 0.001184 0.000161 0.001924 0.002886
+    0.001184 0.006400 0.000580 0.008840 0.006240
+    0.000161 0.000580 0.000841 0.001885 0.001131
+    0.001924 0.008840 0.001885 0.016900 0.003380
     0.002886 0.006240 0.001131 0.003380 0.067600
 ]
 ctb = relative_risk_contribution(w, covmat)
 
 @test all(isapprox.(ctb, [0.009944 0.217649 0.059174 0.284805 0.428427]'; rtol=0.0001))
-
 
 end

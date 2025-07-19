@@ -43,15 +43,15 @@ julia> simple_returns(prices; drop_first=true)
   0.01503006012024044
 ```
 """
-function simple_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractVector
+function simple_returns(prices::T; drop_first=false, first_value=NaN) where {T<:AbstractVector}
     if drop_first
         a = @view prices[2:end]
-        b = @view prices[1:end-1]
+        b = @view prices[1:(end - 1)]
         (a ./ b) .- 1.0
     else
         res = copy(prices)
         a = @view prices[2:end]
-        b = @view prices[1:end-1]
+        b = @view prices[1:(end - 1)]
         res[2:end] .= (a ./ b) .- 1.0
         res[1] = first_value
         res
@@ -161,15 +161,15 @@ julia> simple_returns(prices; drop_first=true)
   0.0150301    0.00806452
 ```
 """
-function simple_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractMatrix
+function simple_returns(prices::T; drop_first=false, first_value=NaN) where {T<:AbstractMatrix}
     if drop_first
         a = @view prices[2:end, :]
-        b = @view prices[1:end-1, :]
+        b = @view prices[1:(end - 1), :]
         (a ./ b) .- 1.0
     else
         res = copy(prices)
         a = @view prices[2:end, :]
-        b = @view prices[1:end-1, :]
+        b = @view prices[1:(end - 1), :]
         res[2:end, :] .= (a ./ b) .- 1.0
         res[1, :] .= first_value
         res
@@ -221,15 +221,15 @@ julia> log_returns(prices; drop_first=true)
   0.014918227937219366
 ```
 """
-function log_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractVector
+function log_returns(prices::T; drop_first=false, first_value=NaN) where {T<:AbstractVector}
     if drop_first
         a = @view prices[2:end]
-        b = @view prices[1:end-1]
+        b = @view prices[1:(end - 1)]
         log.(a ./ b)
     else
         res = copy(prices)
         a = @view prices[2:end]
-        b = @view prices[1:end-1]
+        b = @view prices[1:(end - 1)]
         res[2:end] .= log.(a ./ b)
         res[1] = first_value
         res
@@ -282,15 +282,15 @@ julia> log_returns(prices; drop_first=true)
   0.0149182    0.00803217
 ```
 """
-function log_returns(prices::T; drop_first=false, first_value=NaN) where T <: AbstractMatrix
+function log_returns(prices::T; drop_first=false, first_value=NaN) where {T<:AbstractMatrix}
     if drop_first
         a = @view prices[2:end, :]
-        b = @view prices[1:end-1, :]
+        b = @view prices[1:(end - 1), :]
         log.(a ./ b)
     else
         res = copy(prices)
         a = @view prices[2:end, :]
-        b = @view prices[1:end-1, :]
+        b = @view prices[1:(end - 1), :]
         res[2:end, :] .= log.(a ./ b)
         res[1, :] .= first_value
         res

@@ -1,0 +1,5 @@
+indent = 4
+style  = "blue"
+margin = 100
+trailing_comma = true
+always_use_return = false

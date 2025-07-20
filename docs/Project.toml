@@ -1,3 +1,4 @@
 [deps]
 Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+RiskPerf = "9166ba07-fd5b-44b6-9936-7aa4238d27f8"

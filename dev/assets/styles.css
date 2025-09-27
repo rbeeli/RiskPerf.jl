@@ -10,3 +10,13 @@
   overflow-x: auto !important;
   font-size: 0.875rem;
 }
+
+#documenter .docs-sidebar,
+html.theme--documenter-dark #documenter .docs-sidebar {
+	border-right: none !important;
+}
+
+#documenter .docs-sidebar .docs-version-selector,
+html.theme--documenter-dark #documenter .docs-sidebar .docs-version-selector {
+	border-top: none !important;
+}

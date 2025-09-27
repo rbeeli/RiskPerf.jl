@@ -80,6 +80,7 @@ lower_partial_moment(returns, threshold, n, method=:partial)
 
 higher_partial_moment(returns, threshold, n, method=:full)
 higher_partial_moment(returns, threshold, n, method=:partial)
+```
 
 ## Bug reports and feature requests
 

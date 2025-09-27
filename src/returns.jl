@@ -193,7 +193,7 @@ For simple returns:
 
 For log returns:
 
-``R_{total} = \\exp\\left(\\sum_{i=1}^N r_i\\right) - 1``
+``R_{total} = \\exp\\left( \\sum_{i=1}^N r_i \\right) - 1``
 
 # Examples
 ```jldoctest

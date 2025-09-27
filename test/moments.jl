@@ -1,0 +1,21 @@
+@testitem "moments" setup = [TestData] begin
+    @test skewness(asset_returns) ≈ -0.0904045109144944
+    @test skewness(asset_returns; method=:moment) ≈ -0.0904045109144944
+    @test skewness(asset_returns; method=:fisher_pearson) ≈ -0.09054037810903758                # bug in R's PerformanceAnalytics, corrected here
+    @test skewness(asset_returns; method=:sample) ≈ -0.0906763586376902
+
+    @test kurtosis(asset_returns) ≈ 0.0619856901585289
+    @test kurtosis(asset_returns; method=:excess) ≈ 0.0619856901585289
+    @test kurtosis(asset_returns; method=:moment) ≈ 3.06198569015853
+    @test kurtosis(asset_returns; method=:cornish_fisher) ≈ -0.158076535757453
+
+    @test lower_partial_moment(asset_returns, 0.001, 2, :full) ≈ 1.04085283515417e-06
+    @test lower_partial_moment(asset_returns, rf, 2, :full) ≈ 2.25203946399689e-07
+    @test lower_partial_moment(asset_returns, 0.001, 2, :partial) ≈ 1.51949319000609e-06
+    @test lower_partial_moment(asset_returns, rf, 2, :partial) ≈ 7.33563343321463e-07
+
+    @test higher_partial_moment(asset_returns, 0.001, 2, :full) ≈ 2.15200955473486e-07
+    @test higher_partial_moment(asset_returns, rf, 2, :full) ≈ 1.0554005124107e-06
+    @test higher_partial_moment(asset_returns, 0.001, 2, :partial) ≈ 6.83177636423766e-07
+    @test higher_partial_moment(asset_returns, rf, 2, :partial) ≈ 1.5229444623531e-06
+end

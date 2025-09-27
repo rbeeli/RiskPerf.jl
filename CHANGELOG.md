@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.3.0] – 2025‑09‑27
+
+### Breaking changes ⚠️
+
+- Changed `expected_shortfall` function to use keyword argument for `method` instead of positional argument
+- Renamed `drawdowns` to `drawdowns_pct` for clarity
+
+### Added
+
+- Added functions `max_drawdown_pnl` and `max_drawdown_pct` for calculating maximum drawdown metric in absolute and percentage terms
+- Added function `total_return` for calculating total return of a series
+
+### Changed
+
+- Migrated to `TestItemRunner.jl` for improved testing framework
+
+### Fixed
+
+- Harmonised `value_at_risk` and `expected_shortfall` annualisation to eliminate inconsistent multiplier outputs
+- Prevented historical expected shortfall from returning `NaN` when the tail sample is smaller than the requested confidence level
+
 ## [0.2.0] – 2025‑07‑20
 
 ### Changed

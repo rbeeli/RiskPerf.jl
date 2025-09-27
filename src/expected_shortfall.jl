@@ -8,10 +8,12 @@ For instance, for a 5% significance level, the expected shortfall is calculated 
 
 Expected Shortfall puts emphasis on the tail of the loss distribution, whereas Value-at-risk neglects this aspect.
 
+Returns NaN for empty returns vector.
+
 # Arguments
 - `returns`:        Vector of asset returns.
 - `α`:              Significance level, e.g. use `0.05` for 95% confidence, or `0.01` for 99% confidence.
-- `method`:         Distribution estimation method: `:historical`, `:gaussian` or `:cornish_fisher`.
+- `method`:         Distribution estimation method: `:historical` (default), `:gaussian` or `:cornish_fisher`.
 - `multiplier`:     Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
 
 # Methods
@@ -22,18 +24,20 @@ Expected Shortfall puts emphasis on the tail of the loss distribution, whereas V
 # Sources
 - Amédée-Manesme, Charles-Olivier and Barthélémy, Fabrice and Maillard, Didier (2017). Computation of the Corrected Cornish–Fisher Expansion using the Response Surface Methodology: Application to VaR and CVaR. THEMA Working Paper n°2017-21, Université de Cergy-Pontoise, France.
 """
-function expected_shortfall(returns, α, method::Symbol; multiplier=1.0)
-    if method == :historical
+function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=1.0)
+    isempty(returns) && return NaN
+
+    μ = mean(returns)
+    base = if method == :historical
         # average return below significance level (quantile)
         sorted = sort(returns)
-        idx = floor(Int64, length(sorted) * α)
-        return mean(sorted[1:idx]) * sqrt(multiplier)
+        count = max(1, Int(ceil(length(sorted) * α)))
+        mean(view(sorted, 1:count))
     elseif method == :gaussian
         # derivation: http://blog.smaga.ch/expected-shortfall-closed-form-for-normal-distribution/
         q = quantile(Normal(), α)
-        μ = mean(returns)
         σ = std(returns; corrected=false)
-        return (μ - σ * pdf(Normal(), q) / α) * sqrt(multiplier)
+        μ - σ * pdf(Normal(), q) / α
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
@@ -51,14 +55,16 @@ function expected_shortfall(returns, α, method::Symbol; multiplier=1.0)
                 1 / 72 * (g^6 - 9g^4 + 9g^2 + 3) * S^2 +
                 1 / 24 * (g^4 - 2g^2 - 1) * K
             )
-        μ = mean(returns)
         σ = std(returns; corrected=false)
-        return (μ + σ * EG2) * sqrt(multiplier)
+        μ + σ * EG2
+    else
+        throw(
+            ArgumentError(
+                "Passed method parameter '$(method)' is invalid, must be one of :historical, :gaussian, :cornish_fisher.",
+            ),
+        )
     end
 
-    throw(
-        ArgumentError(
-            "Passed method parameter '$(method)' is invalid, must be one of :historical, :gaussian, :cornish_fisher.",
-        ),
-    )
+    multiplier == 1.0 && return base
+    μ * multiplier + sqrt(multiplier) * (base - μ)
 end

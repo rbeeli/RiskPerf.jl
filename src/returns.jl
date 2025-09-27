@@ -177,6 +177,59 @@ function simple_returns(prices::T; drop_first=false, first_value=NaN) where {T<:
 end
 
 """
+    total_return(returns::AbstractVector; method=:simple)
+
+Calculates the total compounded return for a series of returns.
+
+# Arguments
+- `returns`: Vector of simple or log returns.
+- `method`: Either `:simple` (default) when `returns` are simple returns, or `:log` when they are log returns.
+
+# Formula
+
+For simple returns:
+
+``R_{total} = \\prod_{i=1}^N (1 + r_i) - 1``
+
+For log returns:
+
+``R_{total} = \\exp\\left(\\sum_{i=1}^N r_i\right) - 1``
+
+# Examples
+```jldoctest
+julia> using RiskPerf
+
+julia> simple = [0.01, -0.02, 0.015];
+
+julia> total_return(simple)
+0.004100999999999987
+
+julia> logret = log.(1 .+ simple);
+
+julia> total_return(logret; method=:log)
+0.004100999999999987
+```
+"""
+function total_return(returns::AbstractVector; method::Symbol=:simple)
+    T = promote_type(eltype(returns), Float64)
+    if method == :simple
+        total = one(T)
+        for r in returns
+            total *= one(T) + T(r)
+        end
+        return total - one(T)
+    elseif method == :log
+        sum_logs = zero(T)
+        for r in returns
+            sum_logs += T(r)
+        end
+        return exp(sum_logs) - one(T)
+    end
+
+    throw(ArgumentError("Invalid method $(method). Use :simple or :log."))
+end
+
+"""
     log_returns(prices::Vector; drop_first=false, first_value=NaN)
 
 Calculates the log-return series based on the provided time series of `N` prices.

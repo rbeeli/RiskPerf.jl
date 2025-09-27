@@ -10,20 +10,27 @@ Quantitative risk and performance analysis package for financial time series pow
 
 ```julia
 simple_returns(prices::AbstractVector; drop_first=false, first_value=NaN)
-
 simple_returns(prices::AbstractMatrix; drop_first=false, first_value=NaN)
 
 log_returns(prices::AbstractVector; drop_first=false, first_value=NaN)
-
 log_returns(prices::AbstractMatrix; drop_first=false, first_value=NaN)
+
+total_return(returns::AbstractVector; method=:simple)
+total_return(returns::AbstractVector; method=:log)
 
 volatility(returns; multiplier=1.0)
 
-drawdowns(returns; geometric::Bool=false)
+drawdowns_pct(returns; geometric=false)
 
 drawdowns_pnl(pnl)
 
-expected_shortfall(returns, α, method::Symbol; multiplier=1.0)
+max_drawdown_pct(returns; geometric=false)
+
+max_drawdown_pnl(pnl)
+
+expected_shortfall(returns, α; method=:historical, multiplier=1.0)
+expected_shortfall(returns, α; method=:gaussian, multiplier=1.0)
+expected_shortfall(returns, α; method=:cornish_fisher, multiplier=1.0)
 
 information_ratio(asset_returns, benchmark_returns; multiplier=1.0)
 
@@ -31,9 +38,13 @@ jensen_alpha(asset_returns, benchmark_returns; risk_free=0.0)
 
 modified_jensen(asset_returns, benchmark_returns; risk_free=0.0)
 
-skewness(x; method::Symbol=:moment)
+skewness(x; method=:moment)
+skewness(x; method=:fisher_pearson)
+skewness(x; method=:sample)
 
-kurtosis(x; method::Symbol=:excess)
+kurtosis(x; method=:excess)
+kurtosis(x; method=:moment)
+kurtosis(x; method=:cornish_fisher)
 
 omega_ratio(returns, target_return)
 
@@ -49,20 +60,26 @@ tracking_error(asset_returns, benchmark_returns; multiplier=1.0)
 
 treynor_ratio(asset_returns, benchmark_returns; multiplier=1.0, risk_free=0.0)
 
-downside_deviation(returns, threshold; method::Symbol=:full)
+downside_deviation(returns, threshold; method=:full)
+downside_deviation(returns, threshold; method=:partial)
 
-upside_deviation(returns, threshold; method::Symbol=:full)
+upside_deviation(returns, threshold; method=:full)
+upside_deviation(returns, threshold; method=:partial)
 
-upside_potential_ratio(returns, threshold; method::Symbol=:partial)
+upside_potential_ratio(returns, threshold; method=:full)
+upside_potential_ratio(returns, threshold; method=:partial)
 
-value_at_risk(returns, α, method::Symbol; multiplier=1.0)
+value_at_risk(returns, α; method=:historical, multiplier=1.0)
+value_at_risk(returns, α; method=:gaussian, multiplier=1.0)
+value_at_risk(returns, α; method=:cornish_fisher, multiplier=1.0)
 
 capm(asset_returns, benchmark_returns; risk_free=0.0)
 
-lower_partial_moment(returns, threshold, n, method::Symbol)
+lower_partial_moment(returns, threshold, n, method=:full)
+lower_partial_moment(returns, threshold, n, method=:partial)
 
-higher_partial_moment(returns, threshold, n, method::Symbol)
-```
+higher_partial_moment(returns, threshold, n, method=:full)
+higher_partial_moment(returns, threshold, n, method=:partial)
 
 ## Bug reports and feature requests
 

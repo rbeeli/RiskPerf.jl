@@ -9,7 +9,7 @@ This function calculates the Information Ratio as the active return divided by t
 
 # Arguments
 - `asset_returns`:      Vector of asset returns.
-- `benchmark_returns`:  Vector or scalar value of benchmark returns having same same frequency (e.g. daily) as the provided returns.
+- `benchmark_returns`:  Vector or scalar value of benchmark returns having the same frequency (e.g. daily) as the provided returns.
 - `multiplier`:         Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
 
 # Sources

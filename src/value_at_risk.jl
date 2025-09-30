@@ -1,5 +1,5 @@
 """
-    value_at_risk(returns, confidence, method; multiplier=1.0)
+    value_at_risk(returns, α; method=:historical, multiplier=1.0)
 
 Computes the Value-at-Risk (VaR) for a given significance level `α` based on the chosen estimation method. The VaR value represents the maximum expected loss at a certain significance level `α`. For a more tail-risk focused measure, see `expected_shortfall`.
 

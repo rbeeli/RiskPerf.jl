@@ -1,5 +1,5 @@
 """
-    expected_shortfall(returns, confidence, method; multiplier=1.0)
+    expected_shortfall(returns, α; method=:historical, multiplier=1.0)
 
 Computes the Expected Shortfall (ES), also known as Conditional Value-at-Risk (CVaR), Average Value-at-Risk (AVaR) or Expected Tail Loss (ETL).
 The ES is the expected return on the asset in the worst `α%` of cases, therefore quantifies the tail-risk of an asset.

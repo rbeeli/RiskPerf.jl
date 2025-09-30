@@ -1,11 +1,14 @@
 """
-    drawdowns_pct(returns; compound)
+    drawdowns_pct(returns; geometric)
 
 Calculates the drawdown in percentage based on a returns time series.
 
 # Arguments
-- `returns`:    Vector of asset returns (usually log-returns).
-- `geometric`:  Use geometric compounding (`cumprod`) if set to `true`, otherwise simple arithmetic sum (`cumsum`), e.g. for log-returns (default).
+- `returns`:    Vector of asset returns.
+- `geometric`:  If `true`, use geometric compounding via `cumprod(1 .+ returns)` (exact for simple returns).
+                If `false`, use arithmetic accumulation `1 .+ cumsum(returns)` as a simple approximation.
+                For log returns, geometric compounding reflects exact wealth dynamics via `exp.(cumsum(returns))`,
+                which is not implemented here; use the `geometric=true` path with simple returns if you need exact compounding.
 """
 function drawdowns_pct(returns; geometric::Bool=false)
     if geometric

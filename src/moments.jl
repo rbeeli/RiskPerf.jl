@@ -80,6 +80,7 @@ end
     lower_partial_moment(returns, threshold, n, method)
 
 This function calculates the Lower Partial Moment (LPM) for a given threshold.
+Returns 0.0 when the denominator is zero (no-tail or empty returns).
 
 # Arguments
 - `returns`:     Vector of asset returns.
@@ -114,6 +115,7 @@ end
     higher_partial_moment(returns, threshold, n, method)
 
 This function calculates the Higher Partial Moment (HPM) for a given threshold.
+Returns 0.0 when the denominator is zero (no-tail or empty returns).
 
 # Arguments
 - `returns`:     Vector of asset returns.

@@ -13,4 +13,4 @@ Calculates the ex-post Tracking Error based on the standard deviation of the act
 - `multiplier`:         Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
 """
 @inline tracking_error(asset_returns, benchmark_returns; multiplier=1.0) =
-    std(asset_returns .- benchmark_returns) * sqrt(multiplier)
+    std_excess(asset_returns, benchmark_returns) * sqrt(multiplier)

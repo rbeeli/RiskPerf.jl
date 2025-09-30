@@ -19,5 +19,5 @@ we divide by the CAPM beta as risk proxy.
 """
 @inline function treynor_ratio(asset_returns, benchmark_returns; multiplier=1.0, risk_free=0.0)
     α, β = capm(asset_returns, benchmark_returns; risk_free=risk_free)
-    mean(asset_returns .- risk_free) / β * multiplier
+    mean_excess(asset_returns, risk_free) / β * multiplier
 end

@@ -15,7 +15,6 @@ This function calculates the Information Ratio as the active return divided by t
 # Sources
 - Sharpe, William F. (1994). "The Sharpe Ratio". The Journal of Portfolio Management.
 """
-@inline function information_ratio(asset_returns, benchmark_returns; multiplier=1.0)
-    mean(asset_returns .- benchmark_returns) / std(asset_returns .- benchmark_returns) *
+@inline information_ratio(asset_returns, benchmark_returns; multiplier=1.0) =
+    mean_excess(asset_returns, benchmark_returns) / std_excess(asset_returns, benchmark_returns) *
     sqrt(multiplier)
-end

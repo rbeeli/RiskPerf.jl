@@ -177,6 +177,83 @@ function simple_returns(prices::T; drop_first=false, first_value=NaN) where {T<:
 end
 
 """
+    mean_excess(x, y)
+
+Compute the mean of the elementwise difference `x - y` without allocating
+intermediate arrays. Supports `y::Real` (scalar) and `y::AbstractArray` with
+matching length. Returns a floating result with a promoted accumulation type.
+
+This is a fast replacement for patterns like `mean(x .- y)`.
+"""
+function mean_excess(x::AbstractArray, y::Real)
+    n = length(x)
+    n == 0 && throw(ArgumentError("mean of empty collection"))
+    T = float(promote_type(eltype(x), typeof(y)))
+    s = zero(T)
+    Ty = T(y)
+    @inbounds @simd for i in eachindex(x)
+        s += T(x[i]) - Ty
+    end
+    return s / T(n)
+end
+
+"""
+    mean_excess(x, y)
+
+Compute the mean of the elementwise difference `x - y` without allocating
+intermediate arrays. Supports `y::Real` (scalar) and `y::AbstractArray` with
+matching length. Returns a floating result with a promoted accumulation type.
+
+This is a fast replacement for patterns like `mean(x .- y)`.
+"""
+function mean_excess(x::AbstractArray, y::AbstractArray)
+    @assert length(x) == length(y)
+    n = length(x)
+    n == 0 && throw(ArgumentError("mean of empty collection"))
+    T = float(promote_type(eltype(x), eltype(y)))
+    s = zero(T)
+    @inbounds @simd for i in eachindex(x, y)
+        s += T(x[i]) - T(y[i])
+    end
+    return s / T(n)
+end
+
+"""
+    std_excess(x, y; corrected=true)
+
+Compute the standard deviation of the elementwise difference `x - y` without
+allocating intermediates. Supports `y::Real` (scalar) and `y::AbstractArray`
+with matching length. Mirrors `Statistics.std` semantics for `corrected`.
+"""
+function std_excess(x::AbstractArray, y::Real; corrected::Bool=true)
+    n = length(x)
+    n == 0 && throw(ArgumentError("std of empty collection"))
+    T = float(promote_type(eltype(x), typeof(y)))
+    m = mean_excess(x, y)
+    Ty = T(y)
+    ss = zero(T)
+    @inbounds @simd for i in eachindex(x)
+        d = T(x[i]) - Ty - m
+        ss = muladd(d, d, ss)
+    end
+    return corrected ? (n > 1 ? sqrt(ss / T(n - 1)) : T(NaN)) : sqrt(ss / T(n))
+end
+
+function std_excess(x::AbstractArray, y::AbstractArray; corrected::Bool=true)
+    @assert length(x) == length(y)
+    n = length(x)
+    n == 0 && throw(ArgumentError("std of empty collection"))
+    T = float(promote_type(eltype(x), eltype(y)))
+    m = mean_excess(x, y)
+    ss = zero(T)
+    @inbounds @simd for i in eachindex(x, y)
+        d = T(x[i]) - T(y[i]) - m
+        ss = muladd(d, d, ss)
+    end
+    return corrected ? (n > 1 ? sqrt(ss / T(n - 1)) : T(NaN)) : sqrt(ss / T(n))
+end
+
+"""
     total_return(returns::AbstractVector; method=:simple)
 
 Calculates the total compounded return for a series of returns.

@@ -4,7 +4,7 @@
 
 ### Added
 
-- `mean_excess` and `std_excess` helpers for allocation‑free mean and standard deviation of differences; exported.
+- `mean_excess` and `std_excess` helpers for allocation‑free mean and standard deviation of differences.
 
 ### Changed
 

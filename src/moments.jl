@@ -94,17 +94,18 @@ This function calculates the Lower Partial Moment (LPM) for a given threshold.
 where `N` is the number of returns, and `D` is the denominator.
 """
 function lower_partial_moment(returns, threshold, n, method::Symbol)
-    if method == :full
-        denominator = length(returns)
+    denominator = if method == :full
+        length(returns)
     elseif method == :partial
-        denominator = count(returns .< threshold)
+        count(returns .< threshold)
     else
         throw(
             ArgumentError(
-                "Passed method parameter '$(method)' is invalid, must be one of :full, :partial."
+                "Passed method parameter '$(method)' is invalid, must be one of :full, :partial.",
             ),
         )
     end
+    denominator == 0 && return 0.0
     excess = threshold .- returns
     sum(map(x -> max(0.0, x)^n, excess)) / denominator
 end
@@ -127,17 +128,18 @@ This function calculates the Higher Partial Moment (HPM) for a given threshold.
 where `N` is the number of returns, and `D` is the denominator.
 """
 function higher_partial_moment(returns, threshold, n, method::Symbol)
-    if method == :full
-        denominator = length(returns)
+    denominator = if method == :full
+        length(returns)
     elseif method == :partial
-        denominator = count(returns .> threshold)
+        count(returns .> threshold)
     else
         throw(
             ArgumentError(
-                "Passed method parameter '$(method)' is invalid, must be one of :full, :partial."
+                "Passed method parameter '$(method)' is invalid, must be one of :full, :partial.",
             ),
         )
     end
+    denominator == 0 && return 0.0
     excess = returns .- threshold
     sum(map(x -> max(0.0, x)^n, excess)) / denominator
 end

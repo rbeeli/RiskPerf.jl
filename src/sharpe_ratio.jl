@@ -20,9 +20,8 @@ Calculates the Sharpe Ratio (SR) according to the original definition by William
 - Sharpe, W. F. (1966). Mutual Fund Performance. Journal of Business.
 - Sharpe, William F. (1994). The Sharpe Ratio. The Journal of Portfolio Management.
 """
-function sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
+@inline sharpe_ratio(returns; multiplier=1.0, risk_free=0.0) =
     mean(returns .- risk_free) / std(returns) * sqrt(multiplier)
-end
 
 """
     adjusted_sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)

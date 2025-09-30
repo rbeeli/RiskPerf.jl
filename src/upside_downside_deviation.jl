@@ -13,9 +13,8 @@ Calculates the downside deviation, also called semi-standard deviation, which ca
 ``\\text{Downside Deviation} = \\sqrt{\\text{Lower Partial Moment}}``
 
 """
-function downside_deviation(returns, threshold; method::Symbol=:full)
+@inline downside_deviation(returns, threshold; method::Symbol=:full) =
     sqrt(lower_partial_moment(returns, threshold, 2, method))
-end
 
 """
     upside_deviation(returns, threshold; method=:full)
@@ -31,6 +30,5 @@ Calculates the upside deviation, also called semi-standard deviation, which capt
 
 ``\\text{Upside Deviation} = \\sqrt{\\text{Higher Partial Moment}}``
 """
-function upside_deviation(returns, threshold; method::Symbol=:full)
+@inline upside_deviation(returns, threshold; method::Symbol=:full) =
     sqrt(higher_partial_moment(returns, threshold, 2, method))
-end

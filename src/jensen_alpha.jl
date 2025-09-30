@@ -14,7 +14,7 @@ Jensen's alpha measure.
 # Sources
 - Bacon, Carl (2008). Practical Portfolio Performance Measurement and Attribution, 2nd Edition, John Wiley & Sons Ltd. Page 72.
 """
-function jensen_alpha(asset_returns, benchmark_returns; risk_free=0.0)
+@inline function jensen_alpha(asset_returns, benchmark_returns; risk_free=0.0)
     (α, β) = capm(asset_returns, benchmark_returns; risk_free)
     α
 end
@@ -35,7 +35,7 @@ Modified Jensen's alpha measure.
 # Sources
 - Bacon, Carl (2008). Practical Portfolio Performance Measurement and Attribution, 2nd Edition, John Wiley & Sons Ltd. Page 77.
 """
-function modified_jensen(asset_returns, benchmark_returns; risk_free=0.0)
+@inline function modified_jensen(asset_returns, benchmark_returns; risk_free=0.0)
     (α, β) = capm(asset_returns, benchmark_returns; risk_free)
     α / β
 end

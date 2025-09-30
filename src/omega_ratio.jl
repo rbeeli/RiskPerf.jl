@@ -12,7 +12,7 @@ Note that the ratio returns `Inf` if all returns are greater or equal to the tar
 - `returns`:        Vector of asset returns.
 - `target_return`:  Vector or scalar value of benchmark returns having same same frequency (e.g. daily) as the provided returns.
 """
-function omega_ratio(returns, target_return)
+@inline function omega_ratio(returns, target_return)
     excess = returns .- target_return
     gains = sum(map(x -> max(0.0, x), excess))
     losses = -sum(map(x -> min(0.0, x), excess))

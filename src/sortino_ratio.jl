@@ -18,6 +18,5 @@ The downside deviation is simply the standard deviation of the returns below the
 # Sources
 - Sortino, F. and Price, L. (1996). Performance Measurement in a Downside Risk Framework. Journal of Investing.
 """
-function sortino_ratio(returns; multiplier=1.0, MAR=0.0)
+@inline sortino_ratio(returns; multiplier=1.0, MAR=0.0) =
     mean(returns .- MAR) / downside_deviation(returns, MAR; method=:full) * sqrt(multiplier)
-end

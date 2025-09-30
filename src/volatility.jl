@@ -13,6 +13,4 @@ where ``\\sigma`` denotes the sample standard deviation.
 - `returns`:    Vector of asset returns (usually log-returns).
 - `multiplier`: Optional scalar multiplier, i.e. use `12` to annualize monthly returns, and use `252` to annualize daily returns.
 """
-function volatility(returns; multiplier=1.0)
-    std(returns) * sqrt(multiplier)
-end
+@inline volatility(returns; multiplier=1.0) = std(returns) * sqrt(multiplier)

@@ -14,7 +14,7 @@ such that ``\\sum_{i=1}^N \\text{RRC}_i = 1``.
 - `weights`:                Vector of asset weights in portfolio.
 - `covariance_matrix`:      Covariance matrix of asset returns.
 """
-function relative_risk_contribution(weights, covariance_matrix)
+@inline function relative_risk_contribution(weights, covariance_matrix)
     rc = (weights' * covariance_matrix)' .* weights
     rc ./ sum(rc)
 end

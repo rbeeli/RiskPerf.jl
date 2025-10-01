@@ -21,25 +21,29 @@ Returns NaN for empty returns vector.
 - Amédée-Manesme, Charles-Olivier and Barthélémy, Fabrice and Maillard, Didier (2017). Computation of the Corrected Cornish–Fisher Expansion using the Response Surface Methodology: Application to VaR and CVaR. THEMA Working Paper n°2017-21, Université de Cergy-Pontoise, France.
 """
 function value_at_risk(returns, α; method::Symbol=:historical, multiplier=1.0)
-    isempty(returns) && return NaN
+    T = float(promote_type(eltype(returns), typeof(α)))
+    isempty(returns) && return T(NaN)
 
-    μ = mean(returns)
+    μ = T(mean(returns))
+    αT = T(α)
+    normal = Normal{T}(zero(T), one(T))
     base = if method == :historical
         # empirical quantile for VaR estimation
-        quantile(returns, α)
+        T(quantile(returns, αT))
     elseif method == :gaussian
         # parametric Gaussian distribution fit
-        σ = std(returns; corrected=false)
-        iszero(σ) ? μ : μ + σ * quantile(Normal(), α)
+        σ = T(std(returns; corrected=false))
+        iszero(σ) ? μ : μ + σ * quantile(normal, αT)
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # http://www.diva-portal.org/smash/get/diva2:442078/FULLTEXT01.pdf
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
-        q = quantile(Normal(), α)
-        S = skewness(returns)
-        K = kurtosis(returns; method=:excess)
-        z = q + (1 / 6) * (q^2 - 1) * S + (1 / 24) * (q^3 - 3 * q) * K - (1 / 36) * (2 * q^3 - 5 * q) * S^2
-        σ = std(returns; corrected=false)
+        q = quantile(normal, αT)
+        S = T(skewness(returns))
+        K = T(kurtosis(returns; method=:excess))
+        z = q + (T(1) / T(6)) * (q^2 - T(1)) * S + (T(1) / T(24)) * (q^3 - T(3) * q) * K -
+            (T(1) / T(36)) * (T(2) * q^3 - T(5) * q) * (S^2)
+        σ = T(std(returns; corrected=false))
         iszero(σ) ? μ : μ + z * σ
     else
         throw(
@@ -49,6 +53,7 @@ function value_at_risk(returns, α; method::Symbol=:historical, multiplier=1.0)
         )
     end
 
-    multiplier == 1.0 && return base
-    μ * multiplier + sqrt(multiplier) * (base - μ)
+    m = T(multiplier)
+    m == one(T) && return base
+    μ * m + sqrt(m) * (base - μ)
 end

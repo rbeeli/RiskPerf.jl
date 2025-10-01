@@ -18,6 +18,16 @@
     @test higher_partial_moment(asset_returns, rf, 2, :full) ≈ 1.0554005124107e-06
     @test higher_partial_moment(asset_returns, 0.001, 2, :partial) ≈ 6.83177636423766e-07
     @test higher_partial_moment(asset_returns, rf, 2, :partial) ≈ 1.5229444623531e-06
+
+    data32 = Float32[-0.02, 0.01, 0.03, -0.04, 0.05]
+    @test @inferred(skewness(data32)) isa Float32
+    @test @inferred(kurtosis(data32)) isa Float32
+
+    data_big = BigFloat[-0.02, 0.01, 0.03, -0.04, 0.05]
+    @test @inferred(skewness(data_big)) isa BigFloat
+    @test @inferred(kurtosis(data_big; method=:moment)) isa BigFloat
+    @test isnan(@inferred(skewness(BigFloat[])))
+    @test isnan(@inferred(kurtosis(BigFloat[])))
 end
 
 @testitem "moments zero-denominator" begin

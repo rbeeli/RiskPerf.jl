@@ -14,19 +14,22 @@ Calculates the skewness using the specified method.
 """
 function skewness(x; method::Symbol=:moment)
     n = length(x)
-    n == 0 && return NaN
-    μ = mean(x)
+    T = float(eltype(x))
+    n == 0 && return T(NaN)
+    μ = T(mean(x))
     # Two-pass accumulation to avoid temporaries
-    s2 = 0.0
-    s3 = 0.0
+    s2 = zero(T)
+    s3 = zero(T)
     @inbounds @simd for i in eachindex(x)
-        d = x[i] - μ
+        xi = T(x[i])
+        d = xi - μ
         d2 = d * d
         s2 += d2
         s3 += d2 * d
     end
-    m2 = s2 / n
-    m3 = s3 / n
+    tn = T(n)
+    m2 = s2 / tn
+    m3 = s3 / tn
     # sqrt(x)^3 faster than x^1.5 !
     denom = sqrt(m2)^3
 
@@ -36,13 +39,15 @@ function skewness(x; method::Symbol=:moment)
     elseif method == :fisher_pearson
         # Fisher-Pearson standardized moment coefficient
         if n > 2
-            return sqrt(n * (n - 1)) / (n - 2) * (m3 / denom)
+            return sqrt(tn * T(n - 1)) / T(n - 2) * (m3 / denom)
         else
-            return NaN
+            return T(NaN)
         end
     elseif method == :sample
         # Sample skewness
-        return n / ((n - 1) * (n - 2)) * (s3 / denom)
+        num = tn
+        den = T(n - 1) * T(n - 2)
+        return num / den * (s3 / denom)
     end
 
     throw(
@@ -68,32 +73,38 @@ Calculates the kurtosis using on the specified method.
 """
 function kurtosis(x; method::Symbol=:excess)
     n = length(x)
-    n == 0 && return NaN
+    T = float(eltype(x))
+    n == 0 && return T(NaN)
+    tn = T(n)
     if method == :cornish_fisher
-        s2 = 0.0
-        s4 = 0.0
+        s2 = zero(T)
+        s4 = zero(T)
         @inbounds @simd for xi in x
-            x2 = xi * xi
+            val = T(xi)
+            x2 = val * val
             s2 += x2
             s4 += x2 * x2
         end
-        m2 = s2 / n
-        m4 = s4 / n
-        return ((n + 1) * (n - 1) * (m4 / (m2^2) - (3 * (n - 1)) / (n + 1))) / ((n - 2) * (n - 3))
+        m2 = s2 / tn
+        m4 = s4 / tn
+        num = (T(n + 1)) * T(n - 1)
+        adj = m4 / (m2^2) - (T(3) * T(n - 1)) / T(n + 1)
+        return num * adj / (T(n - 2) * T(n - 3))
     elseif method == :moment || method == :excess
-        μ = mean(x)
-        s2 = 0.0
-        s4 = 0.0
+        μ = T(mean(x))
+        s2 = zero(T)
+        s4 = zero(T)
         @inbounds @simd for xi in x
-            d = xi - μ
+            val = T(xi)
+            d = val - μ
             d2 = d * d
             s2 += d2
             s4 += d2 * d2
         end
-        m2 = s2 / n
-        m4 = s4 / n
+        m2 = s2 / tn
+        m4 = s4 / tn
         k = m4 / (m2^2)
-        return method == :moment ? k : (k - 3)
+        return method == :moment ? k : (k - T(3))
     else
         throw(
             ArgumentError(

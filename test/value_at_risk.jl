@@ -16,3 +16,20 @@ end
         @test scaled ≈ expected atol = 1e-12 rtol = 1e-6
     end
 end
+
+@testitem "value_at_risk type stability" begin
+    using Test
+    using RiskPerf
+
+    returns32 = rand(Float32, 16)
+    α32 = Float32(0.05)
+    @test @inferred(value_at_risk(returns32, α32)) isa Float32
+    @test @inferred(value_at_risk(returns32, α32; method=:gaussian)) isa Float32
+    @test @inferred(value_at_risk(returns32, α32; method=:cornish_fisher)) isa Float32
+    @test @inferred(value_at_risk(returns32, α32; multiplier=252)) isa Float32
+    @test isnan(@inferred(value_at_risk(Float32[], α32)))
+
+    returns_big = rand(BigFloat, 16)
+    αbig = big(0.05)
+    @test @inferred(value_at_risk(returns_big, αbig)) isa BigFloat
+end

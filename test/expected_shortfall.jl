@@ -23,3 +23,20 @@ end
 
     @test expected_shortfall(tiny_sample, α; method=:historical) ≈ minimum(tiny_sample)
 end
+
+@testitem "expected_shortfall type stability" begin
+    using Test
+    using RiskPerf
+
+    returns32 = rand(Float32, 16)
+    α32 = Float32(0.05)
+    @test @inferred(expected_shortfall(returns32, α32)) isa Float32
+    @test @inferred(expected_shortfall(returns32, α32; method=:gaussian)) isa Float32
+    @test @inferred(expected_shortfall(returns32, α32; method=:cornish_fisher)) isa Float32
+    @test @inferred(expected_shortfall(returns32, α32; multiplier=252)) isa Float32
+    @test isnan(@inferred(expected_shortfall(Float32[], α32)))
+
+    returns_big = rand(BigFloat, 16)
+    αbig = big(0.05)
+    @test @inferred(expected_shortfall(returns_big, αbig)) isa BigFloat
+end

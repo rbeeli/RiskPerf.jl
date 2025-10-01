@@ -44,17 +44,27 @@ julia> simple_returns(prices; drop_first=true)
 ```
 """
 function simple_returns(prices::T; drop_first=false, first_value=NaN) where {T<:AbstractVector}
+    n = length(prices)
+    Tres = float(eltype(prices))
+
     if drop_first
-        a = @view prices[2:end]
-        b = @view prices[1:(end - 1)]
-        (a ./ b) .- 1.0
+        out = similar(prices, Tres, max(n - 1, 0))
+        @inbounds for i in 2:n
+            pi = Tres(prices[i])
+            pj = Tres(prices[i - 1])
+            out[i - 1] = pi / pj - one(Tres)
+        end
+        return out
     else
-        res = similar(prices)
-        a = @view prices[2:end]
-        b = @view prices[1:(end - 1)]
-        res[2:end] .= (a ./ b) .- 1.0
-        res[1] = first_value
-        res
+        out = similar(prices, Tres, n)
+        n == 0 && return out
+        out[1] = convert(Tres, first_value)
+        @inbounds for i in 2:n
+            pi = Tres(prices[i])
+            pj = Tres(prices[i - 1])
+            out[i] = pi / pj - one(Tres)
+        end
+        return out
     end
 end
 
@@ -162,17 +172,28 @@ julia> simple_returns(prices; drop_first=true)
 ```
 """
 function simple_returns(prices::T; drop_first=false, first_value=NaN) where {T<:AbstractMatrix}
+    n1, n2 = size(prices)
+    Tres = float(eltype(prices))
+
     if drop_first
-        a = @view prices[2:end, :]
-        b = @view prices[1:(end - 1), :]
-        (a ./ b) .- 1.0
+        out = similar(prices, Tres, max(n1 - 1, 0), n2)
+        @inbounds for j in 1:n2, i in 2:n1
+            pi = Tres(prices[i, j])
+            pj = Tres(prices[i - 1, j])
+            out[i - 1, j] = pi / pj - one(Tres)
+        end
+        return out
     else
-        res = similar(prices)
-        a = @view prices[2:end, :]
-        b = @view prices[1:(end - 1), :]
-        res[2:end, :] .= (a ./ b) .- 1.0
-        res[1, :] .= first_value
-        res
+        out = similar(prices, Tres, n1, n2)
+        n1 == 0 && return out
+        fv = convert(Tres, first_value)
+        out[1, :] .= fv
+        @inbounds for j in 1:n2, i in 2:n1
+            pi = Tres(prices[i, j])
+            pj = Tres(prices[i - 1, j])
+            out[i, j] = pi / pj - one(Tres)
+        end
+        return out
     end
 end
 
@@ -251,59 +272,6 @@ function std_excess(x::AbstractArray, y::AbstractArray; corrected::Bool=true)
         ss = muladd(d, d, ss)
     end
     return corrected ? (n > 1 ? sqrt(ss / T(n - 1)) : T(NaN)) : sqrt(ss / T(n))
-end
-
-"""
-    total_return(returns::AbstractVector; method=:simple)
-
-Calculates the total compounded return for a series of returns.
-
-# Arguments
-- `returns`: Vector of simple or log returns.
-- `method`: Either `:simple` (default) when `returns` are simple returns, or `:log` when they are log returns.
-
-# Formula
-
-For simple returns:
-
-``R_{total} = \\prod_{i=1}^N (1 + r_i) - 1``
-
-For log returns:
-
-``R_{total} = \\exp\\left( \\sum_{i=1}^N r_i \\right) - 1``
-
-# Examples
-```jldoctest
-julia> using RiskPerf
-
-julia> simple = [0.01, -0.02, 0.015];
-
-julia> total_return(simple)
-0.004100999999999987
-
-julia> logret = log.(1 .+ simple);
-
-julia> total_return(logret; method=:log)
-0.004100999999999987
-```
-"""
-function total_return(returns::AbstractVector; method::Symbol=:simple)
-    T = promote_type(eltype(returns), Float64)
-    if method == :simple
-        total = one(T)
-        for r in returns
-            total *= one(T) + T(r)
-        end
-        return total - one(T)
-    elseif method == :log
-        sum_logs = zero(T)
-        for r in returns
-            sum_logs += T(r)
-        end
-        return exp(sum_logs) - one(T)
-    end
-
-    throw(ArgumentError("Invalid method $(method). Use :simple or :log."))
 end
 
 """
@@ -425,4 +393,131 @@ function log_returns(prices::T; drop_first=false, first_value=NaN) where {T<:Abs
         res[1, :] .= first_value
         res
     end
+end
+
+"""
+    total_return(returns::AbstractVector; method=:simple)
+
+Calculates the total compounded return for a series of returns.
+
+# Arguments
+- `returns`: Vector of simple or log returns.
+- `method`: Either `:simple` (default) when `returns` are simple returns, or `:log` when they are log returns.
+
+# Formula
+
+For simple returns:
+
+``R_{total} = \\prod_{i=1}^N (1 + r_i) - 1``
+
+For log returns:
+
+``R_{total} = \\exp\\left( \\sum_{i=1}^N r_i \\right) - 1``
+
+# Examples
+```jldoctest
+julia> using RiskPerf
+
+julia> simple = [0.01, -0.02, 0.015];
+
+julia> total_return(simple)
+0.004100999999999987
+
+julia> logret = log.(1 .+ simple);
+
+julia> total_return(logret; method=:log)
+0.004100999999999987
+```
+"""
+function total_return(returns::AbstractVector; method::Symbol=:simple)
+    T = promote_type(eltype(returns), Float64)
+    if method == :simple
+        total = one(T)
+        for r in returns
+            total *= one(T) + T(r)
+        end
+        return total - one(T)
+    elseif method == :log
+        sum_logs = zero(T)
+        for r in returns
+            sum_logs += T(r)
+        end
+        return exp(sum_logs) - one(T)
+    end
+
+    throw(ArgumentError("Invalid method $(method). Use :simple or :log."))
+end
+
+"""
+    cagr(returns::AbstractVector; periods_per_year, method=:simple)
+
+Compute the Compound Annual Growth Rate (CAGR) from a series of periodic returns.
+Supports either simple returns (`method = :simple`) or log returns (`method = :log`).
+
+`periods_per_year` specifies how many return observations correspond to one year
+(e.g. 252 for daily, 12 for monthly, 52 for weekly). The observation frequency
+is inferred as `length(returns) / periods_per_year` years of data.
+
+# Arguments
+- `returns`: Vector of periodic simple or log returns.
+- `periods_per_year`: Number of periods per year (e.g. 252, 12, 52).
+- `method`: `:simple` (default) if `returns` are simple returns, `:log` if they are log returns.
+
+# Formula
+
+Let `N = length(returns)` and `Y = N / periods_per_year` be the number of years
+spanned by the data. Then
+
+For simple returns:
+``CAGR = \\left( \\prod_{i=1}^{N} (1 + r_i) \\right)^{1 / Y} - 1 = \\exp\\left(\\frac{\\sum_{i=1}^{N} \\log(1+r_i)}{Y}\\right) - 1``
+
+For log returns:
+``CAGR = \\exp\\left( \\frac{\\sum_{i=1}^{N} r_i}{Y} \\right) - 1``
+
+# Edge Cases
+- Returns `0.0` if `returns` is empty.
+- Throws `ArgumentError` on invalid `method`.
+
+# Examples
+```jldoctest
+julia> using RiskPerf
+
+julia> monthly_r = fill((1.5)^(1/36) - 1, 36);  # 3 years of monthly returns growing total 50%
+
+julia> cagr(monthly_r; periods_per_year=12)
+0.1447146268169922  # ≈ (1.5)^(1/3) - 1
+
+julia> log_monthly = log.(1 .+ monthly_r);
+
+julia> cagr(log_monthly; periods_per_year=12, method=:log) ≈ cagr(monthly_r; periods_per_year=12)
+true
+```
+"""
+function cagr(returns::AbstractVector; periods_per_year::Real, method::Symbol=:simple)
+    n = length(returns)
+    n == 0 && return 0.0
+    years = n / periods_per_year
+    years <= 0 && throw(
+        ArgumentError(
+            "Non-positive number of years implied (n=$(n), periods_per_year=$(periods_per_year)).",
+        ),
+    )
+    T = promote_type(eltype(returns), Float64)
+
+    if method == :simple
+        # Use log1p for better numerical stability than direct product
+        sum_logs = zero(T)
+        @inbounds for r in returns
+            sum_logs += log1p(T(r))
+        end
+        return exp(sum_logs / T(years)) - one(T)
+    elseif method == :log
+        sum_logs = zero(T)
+        @inbounds for r in returns
+            sum_logs += T(r)
+        end
+        return exp(sum_logs / T(years)) - one(T)
+    end
+
+    throw(ArgumentError("Invalid method $(method). Use :simple or :log."))
 end

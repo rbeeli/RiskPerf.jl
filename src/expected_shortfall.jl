@@ -25,39 +25,43 @@ Returns NaN for empty returns vector.
 - Amédée-Manesme, Charles-Olivier and Barthélémy, Fabrice and Maillard, Didier (2017). Computation of the Corrected Cornish–Fisher Expansion using the Response Surface Methodology: Application to VaR and CVaR. THEMA Working Paper n°2017-21, Université de Cergy-Pontoise, France.
 """
 function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=1.0)
-    isempty(returns) && return NaN
+    T = float(promote_type(eltype(returns), typeof(α)))
+    isempty(returns) && return T(NaN)
 
-    μ = mean(returns)
+    μ = T(mean(returns))
+    αT = T(α)
+    normal = Normal{T}(zero(T), one(T))
     base = if method == :historical
         # average return below significance level (quantile)
         # Use partialsort! on a copy to avoid full sort and allocations
         tmp = copy(returns)
         count = max(1, Int(ceil(length(tmp) * α)))
         partialsort!(tmp, 1:count)
-        mean(view(tmp, 1:count))
+        T(mean(view(tmp, 1:count)))
     elseif method == :gaussian
         # derivation: http://blog.smaga.ch/expected-shortfall-closed-form-for-normal-distribution/
-        q = quantile(Normal(), α)
-        σ = std(returns; corrected=false)
-        μ - σ * pdf(Normal(), q) / α
+        q = quantile(normal, αT)
+        σ = T(std(returns; corrected=false))
+        μ - σ * pdf(normal, q) / αT
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
-        q = quantile(Normal(), α)
-        S = skewness(returns)
-        K = kurtosis(returns; method=:excess)
-        g = q + (1 / 6) * (q^2 - 1) * S + (1 / 24) * (q^3 - 3 * q) * K - (1 / 36) * (2 * q^3 - 5 * q) * S^2
-        ϕ = pdf(Normal(), g)
+        q = quantile(normal, αT)
+        S = T(skewness(returns))
+        K = T(kurtosis(returns; method=:excess))
+        g = q + (T(1) / T(6)) * (q^2 - T(1)) * S + (T(1) / T(24)) * (q^3 - T(3) * q) * K -
+            (T(1) / T(36)) * (T(2) * q^3 - T(5) * q) * (S^2)
+        ϕ = pdf(normal, g)
         EG2 =
-            -1 / α *
+            -T(1) / αT *
             ϕ *
             (
-                1 +
-                1 / 6 * (g^3) * S +
-                1 / 72 * (g^6 - 9g^4 + 9g^2 + 3) * S^2 +
-                1 / 24 * (g^4 - 2g^2 - 1) * K
+                T(1) +
+                (T(1) / T(6)) * (g^3) * S +
+                (T(1) / T(72)) * (g^6 - T(9) * g^4 + T(9) * g^2 + T(3)) * (S^2) +
+                (T(1) / T(24)) * (g^4 - T(2) * g^2 - T(1)) * K
             )
-        σ = std(returns; corrected=false)
+        σ = T(std(returns; corrected=false))
         μ + σ * EG2
     else
         throw(
@@ -67,6 +71,7 @@ function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=
         )
     end
 
-    multiplier == 1.0 && return base
-    μ * multiplier + sqrt(multiplier) * (base - μ)
+    m = T(multiplier)
+    m == one(T) && return base
+    μ * m + sqrt(m) * (base - μ)
 end

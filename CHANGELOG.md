@@ -6,6 +6,7 @@
 
 - `mean_excess` and `std_excess` helpers for allocation‑free mean and standard deviation of differences.
 - `cagr` function for calculating the compound annual growth rate of a series of returns, with support for simple and log returns.
+- `annualized_return` function for calculating the annualized return of a series of returns, with support for simple and log returns.
 
 ### Changed
 

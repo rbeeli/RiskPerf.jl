@@ -22,6 +22,8 @@ total_return(returns::AbstractVector; method=:log)
 
 cagr(returns::AbstractVector, periods_per_year::Real; method=:simple)
 
+annualized_return(returns::AbstractVector, periods_per_year::Real)
+
 volatility(returns::AbstractVector; multiplier=1.0)
 
 information_ratio(asset_returns::AbstractVector, benchmark_returns::Real; multiplier=1.0)

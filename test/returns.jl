@@ -116,3 +116,19 @@ end
     @test_throws ArgumentError cagr(monthly_r, -12)
     @test_throws ArgumentError cagr(monthly_r, Inf)
 end
+
+@testitem "annualized_return" begin
+    using Test
+    using RiskPerf
+
+    monthly = fill(0.01, 12)
+    @test annualized_return(monthly, 12) ≈ 0.12 atol = 1e-12
+
+    mixed = [0.01, -0.02, 0.03]
+    expected = sum(mixed) / length(mixed) * 12
+    @test annualized_return(mixed, 12) ≈ expected atol = 1e-12
+
+    @test annualized_return(Float64[], 12) == 0.0
+    @test_throws ArgumentError annualized_return(mixed, 0)
+    @test_throws ArgumentError annualized_return(mixed, Inf)
+end

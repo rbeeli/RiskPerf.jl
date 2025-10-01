@@ -498,9 +498,7 @@ function cagr(returns::AbstractVector, periods_per_year::Real; method::Symbol=:s
     n == 0 && return 0.0
     ppy = float(periods_per_year)
     (!isfinite(ppy) || ppy <= 0) && throw(
-        ArgumentError(
-            "periods_per_year must be positive and finite (got $(periods_per_year)).",
-        ),
+        ArgumentError("periods_per_year must be positive and finite (got $(periods_per_year)).")
     )
     years = n / ppy
     T = promote_type(eltype(returns), Float64)
@@ -521,4 +519,41 @@ function cagr(returns::AbstractVector, periods_per_year::Real; method::Symbol=:s
     end
 
     throw(ArgumentError("Invalid method $(method). Use :simple or :log."))
+end
+
+"""
+    annualized_return(returns::AbstractVector, periods_per_year::Real)
+
+Compute the arithmetic annualized return by scaling the average periodic return.
+This matches the common "expected annual return" metric on fact sheets where the
+per-period arithmetic mean is multiplied by the observation frequency.
+
+# Arguments
+- `returns`: Vector of periodic simple (arithmetic) returns.
+- `periods_per_year`: Number of periods per calendar year (e.g. 252, 12, 52).
+
+# Formula
+
+Let `μ = mean(returns)` and `k = periods_per_year`. Then
+
+``AnnualizedReturn = μ × k``
+
+# Edge Cases
+- Returns `0.0` if `returns` is empty.
+- Throws `ArgumentError` when `periods_per_year` is non-positive or non-finite.
+"""
+function annualized_return(returns::AbstractVector, periods_per_year::Real)
+    n = length(returns)
+    n == 0 && return 0.0
+    ppy = float(periods_per_year)
+    (!isfinite(ppy) || ppy <= 0) && throw(
+        ArgumentError("periods_per_year must be positive and finite (got $(periods_per_year)).")
+    )
+    T = promote_type(eltype(returns), Float64)
+    s = zero(T)
+    @inbounds for r in returns
+        s += T(r)
+    end
+    μ = s / T(n)
+    μ * T(ppy)
 end

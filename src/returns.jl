@@ -469,10 +469,10 @@ Let `N = length(returns)` and `Y = N / periods_per_year` be the number of years
 spanned by the data. Then
 
 For simple returns:
-``CAGR = \\left( \\prod_{i=1}^{N} (1 + r_i) \\right)^{1 / Y} - 1 = \\exp\\left(\\frac{\\sum_{i=1}^{N} \\log(1+r_i)}{Y}\\right) - 1``
+``\\text{CAGR} = \\left( \\prod_{i=1}^{N} (1 + r_i) \\right)^{1 / Y} - 1 = \\exp\\left(\\frac{\\sum_{i=1}^{N} \\log(1+r_i)}{Y}\\right) - 1``
 
 For log returns:
-``CAGR = \\exp\\left( \\frac{\\sum_{i=1}^{N} r_i}{Y} \\right) - 1``
+``\\text{CAGR} = \\exp\\left( \\frac{\\sum_{i=1}^{N} r_i}{Y} \\right) - 1``
 
 # Edge Cases
 - Returns `0.0` if `returns` is empty.
@@ -536,7 +536,7 @@ per-period arithmetic mean is multiplied by the observation frequency.
 
 Let `μ = mean(returns)` and `k = periods_per_year`. Then
 
-``AnnualizedReturn = μ × k``
+``R_{annualized} = μ × k``
 
 # Edge Cases
 - Returns `0.0` if `returns` is empty.

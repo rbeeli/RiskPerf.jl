@@ -20,6 +20,7 @@ export adjusted_sharpe_ratio,
     total_return,
     cagr,
     annualized_return,
+    calmar_ratio,
     mean_excess,
     std_excess,
     lower_partial_moment,
@@ -52,6 +53,7 @@ include("value_at_risk.jl")
 include("expected_shortfall.jl")
 include("upside_potential_ratio.jl")
 include("drawdowns.jl")
+include("calmar_ratio.jl")
 include("risk_contribution.jl")
 
 end # module RiskPerf

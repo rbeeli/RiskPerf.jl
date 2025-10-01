@@ -58,6 +58,8 @@ tracking_error(asset_returns::AbstractVector, benchmark_returns::AbstractVector;
 treynor_ratio(asset_returns::AbstractVector, benchmark_returns::Real; multiplier=1.0, risk_free=0.0)
 treynor_ratio(asset_returns::AbstractVector, benchmark_returns::AbstractVector; multiplier=1.0, risk_free=0.0)
 
+calmar_ratio(returns::AbstractVector, periods_per_year::Real; compound=true)
+
 omega_ratio(returns::AbstractVector, target_return::Real)
 
 skewness(x::AbstractVector; method=:moment)

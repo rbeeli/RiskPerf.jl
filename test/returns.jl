@@ -90,11 +90,11 @@ end
     monthly_r = fill(monthly_growth^(1 / n) - 1, n)
     # Direct formula
     expected = monthly_growth^(1 / n_years) - 1
-    @test cagr(monthly_r; periods_per_year=periods_per_year) ≈ expected atol = 1e-12
+    @test cagr(monthly_r, periods_per_year) ≈ expected atol = 1e-12
 
     # Log returns variant
     log_r = log.(1 .+ monthly_r)
-    @test cagr(log_r; periods_per_year=periods_per_year, method=:log) ≈ expected atol = 1e-12
+    @test cagr(log_r, periods_per_year; method=:log) ≈ expected atol = 1e-12
 
     # Weekly example using simple returns
     weekly_growth = 2.0  # total double
@@ -103,16 +103,16 @@ end
     n2 = weeks_per_year * years
     weekly_r = fill(weekly_growth^(1 / n2) - 1, n2)
     expected2 = weekly_growth^(1 / years) - 1
-    @test cagr(weekly_r; periods_per_year=weeks_per_year) ≈ expected2 atol = 1e-12
+    @test cagr(weekly_r, weeks_per_year) ≈ expected2 atol = 1e-12
 
     # Empty input
-    @test cagr(Float64[]; periods_per_year=12) == 0.0
+    @test cagr(Float64[], 12) == 0.0
 
     # Invalid method
-    @test_throws ArgumentError cagr(monthly_r; periods_per_year=12, method=:foo)
+    @test_throws ArgumentError cagr(monthly_r, 12; method=:foo)
 
     # Invalid periods_per_year values
-    @test_throws ArgumentError cagr(monthly_r; periods_per_year=0)
-    @test_throws ArgumentError cagr(monthly_r; periods_per_year=-12)
-    @test_throws ArgumentError cagr(monthly_r; periods_per_year=Inf)
+    @test_throws ArgumentError cagr(monthly_r, 0)
+    @test_throws ArgumentError cagr(monthly_r, -12)
+    @test_throws ArgumentError cagr(monthly_r, Inf)
 end

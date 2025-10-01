@@ -20,7 +20,7 @@ log_returns(prices::AbstractMatrix; drop_first=false, first_value=NaN)
 total_return(returns::AbstractVector; method=:simple)
 total_return(returns::AbstractVector; method=:log)
 
-cagr(returns::AbstractVector; periods_per_year::Real, method=:simple)
+cagr(returns::AbstractVector, periods_per_year::Real; method=:simple)
 
 volatility(returns::AbstractVector; multiplier=1.0)
 

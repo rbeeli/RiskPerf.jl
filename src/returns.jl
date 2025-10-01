@@ -449,7 +449,7 @@ function total_return(returns::AbstractVector; method::Symbol=:simple)
 end
 
 """
-    cagr(returns::AbstractVector; periods_per_year, method=:simple)
+    cagr(returns::AbstractVector, periods_per_year; method=:simple)
 
 Compute the Compound Annual Growth Rate (CAGR) from a series of periodic returns.
 Supports either simple returns (`method = :simple`) or log returns (`method = :log`).
@@ -484,16 +484,16 @@ julia> using RiskPerf
 
 julia> monthly_r = fill((1.5)^(1/36) - 1, 36);  # 3 years of monthly returns growing total 50%
 
-julia> cagr(monthly_r; periods_per_year=12)
+julia> cagr(monthly_r, 12)
 0.1447146268169922  # ≈ (1.5)^(1/3) - 1
 
 julia> log_monthly = log.(1 .+ monthly_r);
 
-julia> cagr(log_monthly; periods_per_year=12, method=:log) ≈ cagr(monthly_r; periods_per_year=12)
+julia> cagr(log_monthly, 12; method=:log) ≈ cagr(monthly_r, 12)
 true
 ```
 """
-function cagr(returns::AbstractVector; periods_per_year::Real, method::Symbol=:simple)
+function cagr(returns::AbstractVector, periods_per_year::Real; method::Symbol=:simple)
     n = length(returns)
     n == 0 && return 0.0
     ppy = float(periods_per_year)

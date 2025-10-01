@@ -1,21 +1,21 @@
 """
-    drawdowns_pct(returns; geometric)
+    drawdowns_pct(returns; compound)
 
 Calculates the drawdown in percentage based on a returns time series.
 
 # Arguments
 - `returns`:    Vector of asset returns.
-- `geometric`:  If `true`, use geometric compounding via `cumprod(1 .+ returns)` (exact for simple returns).
-                If `false`, use arithmetic accumulation `1 .+ cumsum(returns)` as a simple approximation.
-                For log returns, geometric compounding reflects exact wealth dynamics via `exp.(cumsum(returns))`,
-                which is not implemented here; use the `geometric=true` path with simple returns if you need exact compounding.
+- `compound`:   When `true` (default), compound wealth via `cumprod(1 .+ returns)` (exact for simple returns).
+                When `false`, use the additive approximation `1 .+ cumsum(returns)`.
+                For log returns, exact dynamics would be `exp.(cumsum(returns))`; combine `compound=true` with
+                simple returns if you need exact compounding.
 """
-function drawdowns_pct(returns; geometric::Bool=false)
+function drawdowns_pct(returns; compound::Bool=true)
     n = length(returns)
     dd = similar(returns, Float64)
     wealth = 1.0
     peak = 1.0
-    if geometric
+    if compound
         @inbounds for i in eachindex(returns)
             wealth *= (1.0 + returns[i])
             peak = max(peak, wealth)
@@ -32,16 +32,16 @@ function drawdowns_pct(returns; geometric::Bool=false)
 end
 
 """
-    max_drawdown_pct(returns; geometric)
+    max_drawdown_pct(returns; compound)
 
 Calculates the maximum drawdown as a positive percentage value for a returns time series.
 """
-function max_drawdown_pct(returns; geometric::Bool=false)
+function max_drawdown_pct(returns; compound::Bool=true)
     cumulative = 1.0
     peak = 1.0
     max_dd = 0.0
 
-    if geometric
+    if compound
         for r in returns
             cumulative *= (1.0 + r)
             peak = max(peak, cumulative)

@@ -14,6 +14,7 @@
 - Reimplemented `capm` with SIMD-friendly, allocation-free loops and scalar/vector dispatch for `risk_free`, yielding order-of-magnitude speedups on large portfolios.
 - Refactored Sharpe, Sortino, Information, Tracking Error, Treynor ratios and omega/drawdown/partial-moment helpers to eliminate intermediate arrays and specialise on scalar vs. vector inputs.
 - Improve type-stability.
+- Changed param `geometric=false` to `compound=true` in `drawdowns_pct` and `max_drawdown_pct`.
 
 ## [0.3.0] – 2025‑09‑27
 

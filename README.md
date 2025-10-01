@@ -33,11 +33,11 @@ jensen_alpha(asset_returns::AbstractVector, benchmark_returns::AbstractVector; r
 modified_jensen(asset_returns::AbstractVector, benchmark_returns::Real; risk_free=0.0)
 modified_jensen(asset_returns::AbstractVector, benchmark_returns::AbstractVector; risk_free=0.0)
 
-drawdowns_pct(returns::AbstractVector; geometric=false)
+drawdowns_pct(returns::AbstractVector; compound=true)
 
 drawdowns_pnl(pnl::AbstractVector)
 
-max_drawdown_pct(returns::AbstractVector; geometric=false)
+max_drawdown_pct(returns::AbstractVector; compound=true)
 
 max_drawdown_pnl(pnl::AbstractVector)
 

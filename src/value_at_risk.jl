@@ -38,7 +38,7 @@ function value_at_risk(returns, α; method::Symbol=:historical, multiplier=1.0)
         q = quantile(Normal(), α)
         S = skewness(returns)
         K = kurtosis(returns; method=:excess)
-        z = q + 1 / 6 * (q^2 - 1)S + 1 / 24 * (q^3 - 3q) * K - 1 / 36 * (2q^3 - 5q) * S^2
+        z = q + (1 / 6) * (q^2 - 1) * S + (1 / 24) * (q^3 - 3 * q) * K - (1 / 36) * (2 * q^3 - 5 * q) * S^2
         σ = std(returns; corrected=false)
         iszero(σ) ? μ : μ + z * σ
     else

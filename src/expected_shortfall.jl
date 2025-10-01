@@ -30,9 +30,11 @@ function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=
     μ = mean(returns)
     base = if method == :historical
         # average return below significance level (quantile)
-        sorted = sort(returns)
-        count = max(1, Int(ceil(length(sorted) * α)))
-        mean(view(sorted, 1:count))
+        # Use partialsort! on a copy to avoid full sort and allocations
+        tmp = copy(returns)
+        count = max(1, Int(ceil(length(tmp) * α)))
+        partialsort!(tmp, 1:count)
+        mean(view(tmp, 1:count))
     elseif method == :gaussian
         # derivation: http://blog.smaga.ch/expected-shortfall-closed-form-for-normal-distribution/
         q = quantile(Normal(), α)
@@ -44,7 +46,7 @@ function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=
         q = quantile(Normal(), α)
         S = skewness(returns)
         K = kurtosis(returns; method=:excess)
-        g = q + 1 / 6 * (q^2 - 1)S + 1 / 24 * (q^3 - 3q) * K - 1 / 36 * (2q^3 - 5q) * S^2
+        g = q + (1 / 6) * (q^2 - 1) * S + (1 / 24) * (q^3 - 3 * q) * K - (1 / 36) * (2 * q^3 - 5 * q) * S^2
         ϕ = pdf(Normal(), g)
         EG2 =
             -1 / α *

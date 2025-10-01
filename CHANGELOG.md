@@ -10,8 +10,8 @@
 
 - `lower_partial_moment` and `higher_partial_moment` now return `0.0` when the denominator is zero (previously `NaN`), improving downstream ratio behavior in no-tail or empty-input cases.
 - Improved and corrected several docstrings (signatures, defaults, typos, and clarifications).
-- Reimplemented `capm` with allocation‑free loops and method dispatch for scalar/vector `risk_free` (significant speedup on large inputs).
-- Refactored `sharpe_ratio`, `sortino_ratio`, `information_ratio`, `tracking_error`, and `treynor_ratio` to use the new allocation‑free helpers, reducing allocations.
+- Reimplemented `capm` with SIMD-friendly, allocation-free loops and scalar/vector dispatch for `risk_free`, yielding order-of-magnitude speedups on large portfolios.
+- Refactored Sharpe, Sortino, Information, Tracking Error, Treynor ratios and omega/drawdown/partial-moment helpers to eliminate intermediate arrays and specialise on scalar vs. vector inputs.
 
 ## [0.3.0] – 2025‑09‑27
 

@@ -15,6 +15,7 @@ such that ``\\sum_{i=1}^N \\text{RRC}_i = 1``.
 - `covariance_matrix`:      Covariance matrix of asset returns.
 """
 @inline function relative_risk_contribution(weights, covariance_matrix)
-    rc = (weights' * covariance_matrix)' .* weights
+    v = covariance_matrix * weights
+    rc = v .* weights
     rc ./ sum(rc)
 end

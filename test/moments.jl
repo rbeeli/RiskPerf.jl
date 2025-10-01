@@ -43,3 +43,7 @@ end
     threshold_zero = 0.0
     @test higher_partial_moment(returns_below, threshold_zero, 2, :partial) == 0.0
 end
+
+@testitem "kurtosis invalid method throws" setup = [TestData] begin
+    @test_throws ArgumentError kurtosis(asset_returns; method=:invalid_method)
+end

@@ -17,19 +17,14 @@ and only downside returns (below `threshold`) in the denominator (see `downside_
 - Plantinga, A., van der Meer, R. and Sortino, F. (2001). The Impact of Downside Risk on
     Risk-Adjusted Performance of Mutual Funds in the Euronext Markets.
 """
-function upside_potential_ratio(returns, threshold; method::Symbol=:partial)
-    if method == :full
-        n = length(returns)
-    elseif method == :partial
-        n = count(returns .> threshold)
-    else
-        throw(
-            ArgumentError(
-                "Passed method parameter '$(method)' is invalid, must be one of :full, :partial."
-            ),
-        )
-    end
+@inline function upside_potential_ratio(returns::AbstractVector, threshold::Real; method::Symbol=:partial)
+    num = higher_partial_moment(returns, threshold, 1, method)
     dd = downside_deviation(returns, threshold; method=method)
-    excess = returns .- threshold
-    (sum(map(x -> max(0.0, x), excess)) / n) / dd
+    num / dd
+end
+
+@inline function upside_potential_ratio(returns::AbstractVector, threshold::AbstractVector; method::Symbol=:partial)
+    num = higher_partial_moment(returns, threshold, 1, method)
+    dd = downside_deviation(returns, threshold; method=method)
+    num / dd
 end

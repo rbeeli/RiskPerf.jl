@@ -11,15 +11,24 @@ Calculates the drawdown in percentage based on a returns time series.
                 which is not implemented here; use the `geometric=true` path with simple returns if you need exact compounding.
 """
 function drawdowns_pct(returns; geometric::Bool=false)
+    n = length(returns)
+    dd = similar(returns, Float64)
+    wealth = 1.0
+    peak = 1.0
     if geometric
-        returns = cumprod(1.0 .+ returns)
+        @inbounds for i in eachindex(returns)
+            wealth *= (1.0 + returns[i])
+            peak = max(peak, wealth)
+            dd[i] = wealth / peak - 1.0
+        end
     else
-        returns = 1.0 .+ cumsum(returns)
+        @inbounds for i in eachindex(returns)
+            wealth += returns[i]
+            peak = max(peak, wealth)
+            dd[i] = wealth / peak - 1.0
+        end
     end
-
-    # cumulative returns needs to start at 1.0 for cumulative max to be correct
-    returns_max = accumulate(max, [1.0; returns])[2:end]
-    returns ./ returns_max .- 1.0
+    dd
 end
 
 """
@@ -58,11 +67,15 @@ Calculates the drawdown based on a Profit-and-Loss (PnL) time series, e.g. daily
 - `pnl`:    Vector of Profit-and-Loss (PnL) values, e.g. daily equity changes in USD.
 """
 function drawdowns_pnl(pnl)
-    pnl = cumsum(pnl)
-
-    # cumulative PnL needs to start at 0.0 for cumulative max to be correct
-    pnl_max = accumulate(max, [0.0; pnl])[2:end]
-    pnl .- pnl_max
+    dd = similar(pnl, Float64)
+    cumulative = 0.0
+    peak = 0.0
+    @inbounds for i in eachindex(pnl)
+        cumulative += pnl[i]
+        peak = max(peak, cumulative)
+        dd[i] = cumulative - peak
+    end
+    dd
 end
 
 """

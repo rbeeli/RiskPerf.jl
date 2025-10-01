@@ -49,7 +49,7 @@ function simple_returns(prices::T; drop_first=false, first_value=NaN) where {T<:
         b = @view prices[1:(end - 1)]
         (a ./ b) .- 1.0
     else
-        res = copy(prices)
+        res = similar(prices)
         a = @view prices[2:end]
         b = @view prices[1:(end - 1)]
         res[2:end] .= (a ./ b) .- 1.0
@@ -167,7 +167,7 @@ function simple_returns(prices::T; drop_first=false, first_value=NaN) where {T<:
         b = @view prices[1:(end - 1), :]
         (a ./ b) .- 1.0
     else
-        res = copy(prices)
+        res = similar(prices)
         a = @view prices[2:end, :]
         b = @view prices[1:(end - 1), :]
         res[2:end, :] .= (a ./ b) .- 1.0
@@ -357,7 +357,7 @@ function log_returns(prices::T; drop_first=false, first_value=NaN) where {T<:Abs
         b = @view prices[1:(end - 1)]
         log.(a ./ b)
     else
-        res = copy(prices)
+        res = similar(prices)
         a = @view prices[2:end]
         b = @view prices[1:(end - 1)]
         res[2:end] .= log.(a ./ b)
@@ -418,7 +418,7 @@ function log_returns(prices::T; drop_first=false, first_value=NaN) where {T<:Abs
         b = @view prices[1:(end - 1), :]
         log.(a ./ b)
     else
-        res = copy(prices)
+        res = similar(prices)
         a = @view prices[2:end, :]
         b = @view prices[1:(end - 1), :]
         res[2:end, :] .= log.(a ./ b)

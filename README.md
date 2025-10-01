@@ -8,6 +8,8 @@ Quantitative risk and performance analysis package for financial time series pow
 
 RiskPerf.jl is engineered for high performance: core metrics avoid temporary allocations, exploit SIMD-friendly loops, and specialize on scalar vs. vector inputs. Compared with naïve broadcast-based implementations, typical routines (e.g. Sharpe/Information ratios, partial moments, summary statistics, etc.) are 5–50× faster and allocate virtually nothing, accelerating large backtests and real-time analytics.
 
+Documentation: [https://rbeeli.github.io/RiskPerf.jl/stable/](https://rbeeli.github.io/RiskPerf.jl/stable/)
+
 ### Functions
 
 ```julia

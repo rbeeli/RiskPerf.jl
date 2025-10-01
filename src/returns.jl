@@ -496,12 +496,13 @@ true
 function cagr(returns::AbstractVector; periods_per_year::Real, method::Symbol=:simple)
     n = length(returns)
     n == 0 && return 0.0
-    years = n / periods_per_year
-    years <= 0 && throw(
+    ppy = float(periods_per_year)
+    (!isfinite(ppy) || ppy <= 0) && throw(
         ArgumentError(
-            "Non-positive number of years implied (n=$(n), periods_per_year=$(periods_per_year)).",
+            "periods_per_year must be positive and finite (got $(periods_per_year)).",
         ),
     )
+    years = n / ppy
     T = promote_type(eltype(returns), Float64)
 
     if method == :simple

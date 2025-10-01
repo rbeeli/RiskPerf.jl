@@ -110,4 +110,9 @@ end
 
     # Invalid method
     @test_throws ArgumentError cagr(monthly_r; periods_per_year=12, method=:foo)
+
+    # Invalid periods_per_year values
+    @test_throws ArgumentError cagr(monthly_r; periods_per_year=0)
+    @test_throws ArgumentError cagr(monthly_r; periods_per_year=-12)
+    @test_throws ArgumentError cagr(monthly_r; periods_per_year=Inf)
 end

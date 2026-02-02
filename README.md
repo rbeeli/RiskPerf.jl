@@ -1,7 +1,7 @@
 # RiskPerf.jl
 
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/rbeeli/RiskPerf.jl/blob/main/LICENSE)
-![Maintenance](https://img.shields.io/maintenance/yes/2025)
+![Maintenance](https://img.shields.io/maintenance/yes/2026)
 [![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://rbeeli.github.io/RiskPerf.jl/stable/)
 
 Quantitative risk and performance analysis package for financial time series powered by the Julia language.

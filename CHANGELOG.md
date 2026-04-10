@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.2] – 2026-04-10
+
+### Added
+
+- `average_drawdown_pct` and `ulcer_index` for drawdown path severity and persistence metrics.
+
 ## [0.3.1] – 2025‑09‑30
 
 ### Added

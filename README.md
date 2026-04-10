@@ -45,6 +45,10 @@ max_drawdown_pct(returns::AbstractVector; compound=true)
 
 max_drawdown_pnl(pnl::AbstractVector)
 
+average_drawdown_pct(returns::AbstractVector; compound=true)
+
+ulcer_index(returns::AbstractVector; compound=true)
+
 capm(asset_returns::AbstractVector, benchmark_returns::Real; risk_free=0.0)
 capm(asset_returns::AbstractVector, benchmark_returns::AbstractVector; risk_free=0.0)
 

@@ -7,6 +7,23 @@
     @test max_drawdown_pct(asset_returns) ≈ -minimum(drawdowns_pct(asset_returns))
     @test max_drawdown_pct(asset_returns; compound=false) ≈
         -minimum(drawdowns_pct(asset_returns; compound=false))
+    @test average_drawdown_pct(asset_returns) ≈ -mean(drawdowns_pct(asset_returns))
+    @test average_drawdown_pct(asset_returns; compound=false) ≈
+        -mean(drawdowns_pct(asset_returns; compound=false))
+    @test ulcer_index(asset_returns) ≈ sqrt(mean(abs2, drawdowns_pct(asset_returns)))
+    @test ulcer_index(asset_returns; compound=false) ≈
+        sqrt(mean(abs2, drawdowns_pct(asset_returns; compound=false)))
+
+    returns = [0.10, -0.10, -0.10, 0.25]
+    @test drawdowns_pct(returns) ≈ [0.0, -0.10, -0.19, 0.0]
+    @test average_drawdown_pct(returns) ≈ 0.0725
+    @test ulcer_index(returns) ≈ sqrt((0.10^2 + 0.19^2) / 4)
+    @test @inferred(average_drawdown_pct(returns)) isa Float64
+    @test @inferred(average_drawdown_pct(returns; compound=false)) isa Float64
+    @test @inferred(ulcer_index(returns)) isa Float64
+    @test @inferred(ulcer_index(returns; compound=false)) isa Float64
+    @test isnan(@inferred(average_drawdown_pct(Float64[])))
+    @test isnan(@inferred(ulcer_index(Float64[])))
 
     pnl = [-50, 100, -20, 30, -120, -10, 200, 10, 18, -12, -20, -30, 0]
     @test length(drawdowns_pnl(pnl)) == length(pnl)

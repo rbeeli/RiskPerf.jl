@@ -58,6 +58,62 @@ function max_drawdown_pct(returns; compound::Bool=true)
     max_dd
 end
 
+function _drawdown_moments_pct(returns; compound::Bool=true)
+    n = length(returns)
+    n == 0 && return (mean_dd=NaN, mean_squared_dd=NaN)
+
+    cumulative = 1.0
+    peak = 1.0
+    sum_dd = 0.0
+    sum_squared_dd = 0.0
+
+    if compound
+        for r in returns
+            cumulative *= (1.0 + r)
+            peak = max(peak, cumulative)
+            drawdown = (peak - cumulative) / peak
+            sum_dd += drawdown
+            sum_squared_dd += drawdown * drawdown
+        end
+    else
+        for r in returns
+            cumulative += r
+            peak = max(peak, cumulative)
+            drawdown = (peak - cumulative) / peak
+            sum_dd += drawdown
+            sum_squared_dd += drawdown * drawdown
+        end
+    end
+
+    (mean_dd=sum_dd / n, mean_squared_dd=sum_squared_dd / n)
+end
+
+"""
+    average_drawdown_pct(returns; compound)
+
+Calculates the average drawdown as a positive percentage value for a returns time series.
+
+This is the time-series mean of the drawdown magnitudes. It captures both drawdown
+depth and time spent below previous peaks, unlike maximum drawdown which only uses
+the single worst point.
+"""
+function average_drawdown_pct(returns; compound::Bool=true)
+    _drawdown_moments_pct(returns; compound=compound).mean_dd
+end
+
+"""
+    ulcer_index(returns; compound)
+
+Calculates the Ulcer Index for a returns time series.
+
+The Ulcer Index is the root mean square of percentage drawdown magnitudes. It
+penalizes persistent drawdowns and gives deeper drawdowns more weight than
+`average_drawdown_pct`.
+"""
+function ulcer_index(returns; compound::Bool=true)
+    sqrt(_drawdown_moments_pct(returns; compound=compound).mean_squared_dd)
+end
+
 """
     drawdowns_pnl(pnl)
 

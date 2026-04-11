@@ -26,6 +26,12 @@ cagr(returns::AbstractVector, periods_per_year::Real; method=:simple)
 
 annualized_return(returns::AbstractVector, periods_per_year::Real)
 
+hit_rate(returns::AbstractVector; threshold=0.0)
+
+best_period_return(returns::AbstractVector)
+
+worst_period_return(returns::AbstractVector)
+
 volatility(returns::AbstractVector; multiplier=1.0)
 
 information_ratio(asset_returns::AbstractVector, benchmark_returns::Real; multiplier=1.0)

@@ -132,3 +132,26 @@ end
     @test_throws ArgumentError annualized_return(mixed, 0)
     @test_throws ArgumentError annualized_return(mixed, Inf)
 end
+
+@testitem "period return helpers" begin
+    using Test
+    using RiskPerf
+
+    constant = fill(0.01, 5)
+    @test hit_rate(constant) == 1.0
+    @test best_period_return(constant) == 0.01
+    @test worst_period_return(constant) == 0.01
+
+    mixed = [0.02, -0.01, 0.0, 0.03]
+    @test hit_rate(mixed) == 0.5
+    @test hit_rate(mixed; threshold=-0.005) == 0.75
+    @test best_period_return(mixed) == 0.03
+    @test worst_period_return(mixed) == -0.01
+
+    flat = zeros(4)
+    @test hit_rate(flat) == 0.0
+
+    @test isnan(hit_rate(Float64[]))
+    @test isnan(best_period_return(Float64[]))
+    @test isnan(worst_period_return(Float64[]))
+end

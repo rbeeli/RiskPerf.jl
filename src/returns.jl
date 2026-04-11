@@ -557,3 +557,35 @@ function annualized_return(returns::AbstractVector, periods_per_year::Real)
     μ = s / T(n)
     μ * T(ppy)
 end
+
+"""
+    hit_rate(returns; threshold=0.0)
+
+Return the fraction of periods with returns strictly greater than `threshold`.
+Periods equal to `threshold` are not counted as hits. Returns `NaN` for empty
+returns.
+"""
+function hit_rate(returns; threshold=0.0)
+    n = length(returns)
+    n == 0 && return NaN
+
+    hits = 0
+    @inbounds for r in returns
+        hits += r > threshold ? 1 : 0
+    end
+    hits / n
+end
+
+"""
+    best_period_return(returns)
+
+Return the maximum period return, or `NaN` for empty returns.
+"""
+best_period_return(returns) = isempty(returns) ? NaN : maximum(returns)
+
+"""
+    worst_period_return(returns)
+
+Return the minimum period return, or `NaN` for empty returns.
+"""
+worst_period_return(returns) = isempty(returns) ? NaN : minimum(returns)

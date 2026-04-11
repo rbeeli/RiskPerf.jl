@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.3.3] – 2026-04-11
+
+### Added
+
+- `hit_rate`, `best_period_return`, and `worst_period_return` helpers for single-period return summaries. `hit_rate` counts returns strictly greater than the threshold.
+
 ## [0.3.2] – 2026-04-10
 
 ### Added

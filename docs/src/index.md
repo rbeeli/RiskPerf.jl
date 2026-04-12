@@ -1,30 +1,75 @@
 # RiskPerf.jl
 
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/rbeeli/RiskPerf.jl/blob/main/LICENSE)
-![Maintenance](https://img.shields.io/maintenance/yes/2026)
-[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://rbeeli.github.io/RiskPerf.jl/stable/)
+`RiskPerf.jl` provides quantitative risk and performance metrics for financial
+time series in Julia.
 
-Quantitative risk and performance analysis package for financial time series powered by the Julia language.
+The core routines avoid temporary allocations, use SIMD-friendly loops where
+appropriate, and specialize scalar and vector inputs for common portfolio and
+strategy analytics workflows.
 
-RiskPerf.jl is engineered for high performance: core metrics avoid temporary allocations, exploit SIMD-friendly loops, and specialize on scalar vs. vector inputs. Compared with naïve broadcast-based implementations, typical routines (e.g. Sharpe/Information ratios, partial moments, summary statistics, etc.) are 5–50× faster and allocate virtually nothing, accelerating large backtests and real-time analytics.
+## Quick Start
 
-## Index
+```julia
+using RiskPerf
 
-```@index
+returns = [0.012, -0.006, 0.004, 0.018, -0.011, 0.009]
 
+sharpe_ratio(returns; multiplier=252)
+sortino_ratio(returns; multiplier=252, MAR=0.0)
+value_at_risk(returns, 0.05)
+expected_shortfall(returns, 0.05)
 ```
 
-## Functions
+Convert price series to returns before calculating risk and performance
+metrics:
 
-```@autodocs
-Modules = [RiskPerf]
-Order   = [:function, :type]
+```julia
+prices = [100.0, 101.0, 100.5, 99.8, 101.3]
+returns = simple_returns(prices; drop_first=true)
+
+total_return(returns)
+cagr(returns, 252)
+max_drawdown_pct(returns)
 ```
 
-## Bug reports and feature requests
+## Common Conventions
 
-Please report any issues via the [GitHub issue tracker](https://github.com/rbeeli/RiskPerf.jl/issues).
+- Return vectors are assumed to be regularly spaced, for example daily, weekly,
+  or monthly.
+- `multiplier` is used for volatility-style annualization; use `252` for daily
+  returns or `12` for monthly returns when those conventions fit the data.
+- Functions that accept `risk_free`, `benchmark_returns`, or threshold inputs
+  support scalars where a constant reference level is intended and vectors where
+  period-by-period reference values are available.
+- Drawdown functions use simple-return compounding by default. Set
+  `compound=false` for the additive approximation.
+
+## Guides
+
+- [API Reference](api.md): generated from the public docstrings in
+  `RiskPerf.jl`
+
+## Development
+
+Run tests with:
+
+```bash
+julia --project -e 'using Pkg; Pkg.test()'
+```
+
+Build docs with:
+
+```bash
+julia --project=docs docs/makedocs.jl
+```
+
+## Bug Reports And Feature Requests
+
+Please report issues via the
+[GitHub issue tracker](https://github.com/rbeeli/RiskPerf.jl/issues).
 
 ## Acknowledgements
 
-This package was inspired by the **R** package [`PerformanceAnalytics`](https://cran.r-project.org/web/packages/PerformanceAnalytics/index.html) of Peter Carl and Brian G. Peterson.
+This package was inspired by the **R** package
+[`PerformanceAnalytics`](https://cran.r-project.org/web/packages/PerformanceAnalytics/index.html)
+of Peter Carl and Brian G. Peterson.

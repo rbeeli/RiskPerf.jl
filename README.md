@@ -2,13 +2,13 @@
 
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/rbeeli/RiskPerf.jl/blob/main/LICENSE)
 ![Maintenance](https://img.shields.io/maintenance/yes/2026)
-[![Documentation](https://img.shields.io/badge/docs-stable-blue.svg)](https://rbeeli.github.io/RiskPerf.jl/stable/)
+[![Docs](https://img.shields.io/badge/docs-live-blue.svg)](https://rbeeli.github.io/RiskPerf.jl/)
 
 Quantitative risk and performance analysis package for financial time series powered by the Julia language.
 
 RiskPerf.jl is engineered for high performance: core metrics avoid temporary allocations, exploit SIMD-friendly loops, and specialize on scalar vs. vector inputs. Compared with naïve broadcast-based implementations, typical routines (e.g. Sharpe/Information ratios, partial moments, summary statistics, etc.) are 5–50× faster and allocate virtually nothing, accelerating large backtests and real-time analytics.
 
-Documentation: [https://rbeeli.github.io/RiskPerf.jl/stable/](https://rbeeli.github.io/RiskPerf.jl/stable/)
+Documentation: <https://rbeeli.github.io/RiskPerf.jl/>
 
 ### Functions
 

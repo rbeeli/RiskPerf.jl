@@ -1,0 +1,24 @@
+@font-face {
+  font-family: JuliaMono-Regular;
+  src: url("https://cdn.jsdelivr.net/gh/cormullion/juliamono/webfonts/JuliaMono-Regular.woff2");
+}
+
+:root {
+  --vp-font-family-mono: JuliaMono-Regular, monospace;
+  --vp-layout-max-width: 1720px;
+}
+
+pre,
+code {
+  font-family: JuliaMono-Regular, monospace;
+  font-feature-settings: "calt" off;
+}
+
+@media (min-width: 1440px) {
+  .VPDoc.has-aside .content-container,
+  .VPDoc.has-aside .container,
+  .VPDoc .content-container,
+  .VPDoc .container {
+    max-width: 1260px !important;
+  }
+}

@@ -1,4 +1,10 @@
 [deps]
-Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
 Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DocumenterVitepress = "4710194d-e776-4893-9690-8d956a29c365"
+NodeJS = "2bd173c7-0d6d-553b-b6af-13a54713934c"
 RiskPerf = "9166ba07-fd5b-44b6-9936-7aa4238d27f8"
+
+[compat]
+Documenter = "1"
+DocumenterVitepress = "0.2.4"
+NodeJS = "2"

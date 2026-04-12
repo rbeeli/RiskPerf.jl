@@ -421,12 +421,12 @@ julia> using RiskPerf
 julia> simple = [0.01, -0.02, 0.015];
 
 julia> total_return(simple)
-0.004100999999999987
+0.004646999999999846
 
 julia> logret = log.(1 .+ simple);
 
 julia> total_return(logret; method=:log)
-0.004100999999999987
+0.004646999999999846
 ```
 """
 function total_return(returns::AbstractVector; method::Symbol=:simple)
@@ -485,7 +485,7 @@ julia> using RiskPerf
 julia> monthly_r = fill((1.5)^(1/36) - 1, 36);  # 3 years of monthly returns growing total 50%
 
 julia> cagr(monthly_r, 12)
-0.1447146268169922  # ≈ (1.5)^(1/3) - 1
+0.14471424255333187
 
 julia> log_monthly = log.(1 .+ monthly_r);
 

@@ -14,7 +14,15 @@ const DEPLOY_REPO = "github.com/rbeeli/RiskPerf.jl.git"
 
 pages = [
     "Home" => "index.md",
-    "API Reference" => "api.md",
+    "Getting Started" => "getting_started.md",
+    "Conventions" => "conventions.md",
+    "API Reference" => [
+        "Overview" => "api.md",
+        "Returns And Drawdowns" => "reference/returns.md",
+        "Risk-Adjusted Performance" => "reference/performance.md",
+        "Tail Risk And Moments" => "reference/tail_risk.md",
+        "Portfolio Risk" => "reference/portfolio.md",
+    ],
 ]
 
 function deploy_decision()

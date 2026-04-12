@@ -589,3 +589,15 @@ best_period_return(returns) = isempty(returns) ? NaN : maximum(returns)
 Return the minimum period return, or `NaN` for empty returns.
 """
 worst_period_return(returns) = isempty(returns) ? NaN : minimum(returns)
+
+"""
+    best_worst_period_return(returns)
+
+Return `(best, worst)` period returns in a single pass, or `(NaN, NaN)` for
+empty returns.
+"""
+function best_worst_period_return(returns)
+    isempty(returns) && return (NaN, NaN)
+    worst, best = extrema(returns)
+    best, worst
+end

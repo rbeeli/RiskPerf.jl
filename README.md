@@ -32,6 +32,8 @@ best_period_return(returns::AbstractVector)
 
 worst_period_return(returns::AbstractVector)
 
+best_worst_period_return(returns::AbstractVector)
+
 volatility(returns::AbstractVector; multiplier=1.0)
 
 information_ratio(asset_returns::AbstractVector, benchmark_returns::Real; multiplier=1.0)

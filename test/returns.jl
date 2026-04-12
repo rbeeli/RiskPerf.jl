@@ -141,17 +141,23 @@ end
     @test hit_rate(constant) == 1.0
     @test best_period_return(constant) == 0.01
     @test worst_period_return(constant) == 0.01
+    @test best_worst_period_return(constant) == (0.01, 0.01)
 
     mixed = [0.02, -0.01, 0.0, 0.03]
     @test hit_rate(mixed) == 0.5
     @test hit_rate(mixed; threshold=-0.005) == 0.75
     @test best_period_return(mixed) == 0.03
     @test worst_period_return(mixed) == -0.01
+    @test best_worst_period_return(mixed) == (0.03, -0.01)
 
     flat = zeros(4)
     @test hit_rate(flat) == 0.0
+    @test best_worst_period_return(flat) == (0.0, 0.0)
 
     @test isnan(hit_rate(Float64[]))
     @test isnan(best_period_return(Float64[]))
     @test isnan(worst_period_return(Float64[]))
+    empty_best, empty_worst = best_worst_period_return(Float64[])
+    @test isnan(empty_best)
+    @test isnan(empty_worst)
 end

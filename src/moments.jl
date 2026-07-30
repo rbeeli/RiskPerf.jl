@@ -1,3 +1,44 @@
+struct MomentSummary{T}
+    mean::T
+    variance::T
+    third_moment::T
+    fourth_moment::T
+end
+
+function moment_summary(x)
+    T = float(eltype(x))
+    n = length(x)
+    if iszero(n)
+        nan = T(NaN)
+        return MomentSummary(nan, nan, nan, nan)
+    end
+
+    μ = T(mean(x))
+    s2 = zero(T)
+    s3 = zero(T)
+    s4 = zero(T)
+    @inbounds @simd for i in eachindex(x)
+        value = T(x[i])
+        difference = value - μ
+        squared_difference = difference * difference
+        s2 += squared_difference
+        s3 += squared_difference * difference
+        s4 += squared_difference * squared_difference
+    end
+    count = T(n)
+    MomentSummary(μ, s2 / count, s3 / count, s4 / count)
+end
+
+moment_standard_deviation(summary::MomentSummary) = sqrt(summary.variance)
+
+function moment_skewness(summary::MomentSummary)
+    summary.third_moment / moment_standard_deviation(summary)^3
+end
+
+function moment_excess_kurtosis(summary::MomentSummary)
+    summary.fourth_moment / summary.variance^2 - oftype(summary.fourth_moment, 3)
+end
+
 """
     skewness(x; method=:moment)
 
@@ -61,6 +102,7 @@ end
     kurtosis(x; method=:excess)
 
 Calculates the kurtosis using on the specified method.
+All methods use deviations from the sample mean.
 
 # Methods
 - Excess (default)
@@ -77,13 +119,15 @@ function kurtosis(x; method::Symbol=:excess)
     n == 0 && return T(NaN)
     tn = T(n)
     if method == :cornish_fisher
+        μ = T(mean(x))
         s2 = zero(T)
         s4 = zero(T)
         @inbounds @simd for xi in x
             val = T(xi)
-            x2 = val * val
-            s2 += x2
-            s4 += x2 * x2
+            d = val - μ
+            d2 = d * d
+            s2 += d2
+            s4 += d2 * d2
         end
         m2 = s2 / tn
         m4 = s4 / tn

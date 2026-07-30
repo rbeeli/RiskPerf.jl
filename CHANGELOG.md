@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.4] – 2026‑07‑30
+
+### Changed
+
+- Reused a two-pass central-moment summary in Gaussian and Cornish-Fisher VaR and expected
+  shortfall calculations, avoiding repeated scans for mean, variance, skewness, and kurtosis.
+- Reworked historical expected shortfall to select only the tail boundary and accumulate the
+  selected tail directly, avoiding a partial sort of the full tail.
+
+### Fixed
+
+- Made Cornish-Fisher kurtosis use mean-centered moments so it is translation invariant.
+
 ## [0.3.3] – 2026-04-11
 
 ### Added

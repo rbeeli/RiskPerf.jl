@@ -29,6 +29,13 @@ end
     @test @inferred(value_at_risk(returns32, α32; multiplier=252)) isa Float32
     @test isnan(@inferred(value_at_risk(Float32[], α32)))
 
+    cornish_fisher_var(values, probability) =
+        value_at_risk(values, probability; method=:cornish_fisher)
+    cornish_fisher_var(returns32, α32)
+    if VERSION >= v"1.12"
+        @test @allocated(cornish_fisher_var(returns32, α32)) == 0
+    end
+
     returns_big = rand(BigFloat, 16)
     αbig = big(0.05)
     @test @inferred(value_at_risk(returns_big, αbig)) isa BigFloat

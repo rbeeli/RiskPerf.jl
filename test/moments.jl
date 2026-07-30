@@ -7,7 +7,7 @@
     @test kurtosis(asset_returns) ≈ 0.0619856901585289
     @test kurtosis(asset_returns; method=:excess) ≈ 0.0619856901585289
     @test kurtosis(asset_returns; method=:moment) ≈ 3.06198569015853
-    @test kurtosis(asset_returns; method=:cornish_fisher) ≈ -0.158076535757453
+    @test kurtosis(asset_returns; method=:cornish_fisher) ≈ 0.06832082235970004
 
     @test lower_partial_moment(asset_returns, 0.001, 2, :full) ≈ 1.04085283515417e-06
     @test lower_partial_moment(asset_returns, rf, 2, :full) ≈ 2.25203946399689e-07
@@ -28,6 +28,47 @@
     @test @inferred(kurtosis(data_big; method=:moment)) isa BigFloat
     @test isnan(@inferred(skewness(BigFloat[])))
     @test isnan(@inferred(kurtosis(BigFloat[])))
+end
+
+@testitem "Cornish-Fisher kurtosis is translation invariant" begin
+    values = [-2.0, -1.0, 1.0, 2.0]
+    translated_values = values .+ 100.0
+
+    value_kurtosis = kurtosis(values; method=:cornish_fisher)
+    translated_kurtosis = kurtosis(translated_values; method=:cornish_fisher)
+
+    @test value_kurtosis ≈ -3.3
+    @test translated_kurtosis ≈ value_kurtosis
+end
+
+@testitem "moment summary" begin
+    values = [-2.0, -1.0, 1.0, 2.0]
+
+    summary = @inferred RiskPerf.moment_summary(values)
+
+    @test summary isa RiskPerf.MomentSummary{Float64}
+    @test summary.mean == 0.0
+    @test summary.variance == 2.5
+    @test summary.third_moment == 0.0
+    @test summary.fourth_moment == 8.5
+    @test @inferred(RiskPerf.moment_standard_deviation(summary)) == sqrt(2.5)
+    @test @inferred(RiskPerf.moment_skewness(summary)) == 0.0
+    @test @inferred(RiskPerf.moment_excess_kurtosis(summary)) ≈ -1.64
+
+    summary_mean(input) = RiskPerf.moment_summary(input).mean
+    summary_mean(values)
+    if VERSION >= v"1.12"
+        @test @allocated(summary_mean(values)) == 0
+    end
+
+    empty_summary = @inferred RiskPerf.moment_summary(Float32[])
+    @test empty_summary isa RiskPerf.MomentSummary{Float32}
+    @test all(isnan, (
+        empty_summary.mean,
+        empty_summary.variance,
+        empty_summary.third_moment,
+        empty_summary.fourth_moment,
+    ))
 end
 
 @testitem "moments zero-denominator" begin

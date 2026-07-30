@@ -28,27 +28,36 @@ function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=
     T = float(promote_type(eltype(returns), typeof(α)))
     isempty(returns) && return T(NaN)
 
-    μ = T(mean(returns))
     αT = T(α)
     normal = Normal{T}(zero(T), one(T))
-    base = if method == :historical
-        # average return below significance level (quantile)
-        # Use partialsort! on a copy to avoid full sort and allocations
-        tmp = copy(returns)
-        count = max(1, Int(ceil(length(tmp) * α)))
-        partialsort!(tmp, 1:count)
-        T(mean(view(tmp, 1:count)))
+    base, μ = if method == :historical
+        tail_count = max(1, Int(ceil(length(returns) * α)))
+        tail_boundary = partialsort!(copy(returns), tail_count)
+        values_below_boundary = 0
+        tail_sum = zero(T)
+        for value in returns
+            if isless(value, tail_boundary)
+                tail_sum += T(value)
+                values_below_boundary += 1
+            end
+        end
+        tail_sum += T(tail_boundary) * T(tail_count - values_below_boundary)
+        (tail_sum / T(tail_count), T(mean(returns)))
     elseif method == :gaussian
         # derivation: http://blog.smaga.ch/expected-shortfall-closed-form-for-normal-distribution/
+        summary = moment_summary(returns)
+        μ = T(summary.mean)
         q = quantile(normal, αT)
-        σ = T(std(returns; corrected=false))
-        μ - σ * pdf(normal, q) / αT
+        σ = T(moment_standard_deviation(summary))
+        (μ - σ * pdf(normal, q) / αT, μ)
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
+        summary = moment_summary(returns)
+        μ = T(summary.mean)
         q = quantile(normal, αT)
-        S = T(skewness(returns))
-        K = T(kurtosis(returns; method=:excess))
+        S = T(moment_skewness(summary))
+        K = T(moment_excess_kurtosis(summary))
         g = q + (T(1) / T(6)) * (q^2 - T(1)) * S + (T(1) / T(24)) * (q^3 - T(3) * q) * K -
             (T(1) / T(36)) * (T(2) * q^3 - T(5) * q) * (S^2)
         ϕ = pdf(normal, g)
@@ -61,8 +70,8 @@ function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=
                 (T(1) / T(72)) * (g^6 - T(9) * g^4 + T(9) * g^2 + T(3)) * (S^2) +
                 (T(1) / T(24)) * (g^4 - T(2) * g^2 - T(1)) * K
             )
-        σ = T(std(returns; corrected=false))
-        μ + σ * EG2
+        σ = T(moment_standard_deviation(summary))
+        (μ + σ * EG2, μ)
     else
         throw(
             ArgumentError(

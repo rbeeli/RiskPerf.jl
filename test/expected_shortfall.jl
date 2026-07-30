@@ -24,6 +24,13 @@ end
     @test expected_shortfall(tiny_sample, α; method=:historical) ≈ minimum(tiny_sample)
 end
 
+@testitem "expected_shortfall selects the historical tail" begin
+    returns = [9.0, 1.0, 5.0, 3.0, 3.0, 7.0]
+
+    @test expected_shortfall(returns, 0.5; method=:historical) == 7.0 / 3.0
+    @test expected_shortfall(returns, 0.99; method=:historical) == 14.0 / 3.0
+end
+
 @testitem "expected_shortfall type stability" begin
     using Test
     using RiskPerf
@@ -35,6 +42,13 @@ end
     @test @inferred(expected_shortfall(returns32, α32; method=:cornish_fisher)) isa Float32
     @test @inferred(expected_shortfall(returns32, α32; multiplier=252)) isa Float32
     @test isnan(@inferred(expected_shortfall(Float32[], α32)))
+
+    cornish_fisher_es(values, probability) =
+        expected_shortfall(values, probability; method=:cornish_fisher)
+    cornish_fisher_es(returns32, α32)
+    if VERSION >= v"1.12"
+        @test @allocated(cornish_fisher_es(returns32, α32)) == 0
+    end
 
     returns_big = rand(BigFloat, 16)
     αbig = big(0.05)

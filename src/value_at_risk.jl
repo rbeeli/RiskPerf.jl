@@ -24,27 +24,30 @@ function value_at_risk(returns, α; method::Symbol=:historical, multiplier=1.0)
     T = float(promote_type(eltype(returns), typeof(α)))
     isempty(returns) && return T(NaN)
 
-    μ = T(mean(returns))
     αT = T(α)
     normal = Normal{T}(zero(T), one(T))
-    base = if method == :historical
+    base, μ = if method == :historical
         # empirical quantile for VaR estimation
-        T(quantile(returns, αT))
+        (T(quantile(returns, αT)), T(mean(returns)))
     elseif method == :gaussian
         # parametric Gaussian distribution fit
-        σ = T(std(returns; corrected=false))
-        iszero(σ) ? μ : μ + σ * quantile(normal, αT)
+        summary = moment_summary(returns)
+        μ = T(summary.mean)
+        σ = T(moment_standard_deviation(summary))
+        (iszero(σ) ? μ : μ + σ * quantile(normal, αT), μ)
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # http://www.diva-portal.org/smash/get/diva2:442078/FULLTEXT01.pdf
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
+        summary = moment_summary(returns)
+        μ = T(summary.mean)
         q = quantile(normal, αT)
-        S = T(skewness(returns))
-        K = T(kurtosis(returns; method=:excess))
+        S = T(moment_skewness(summary))
+        K = T(moment_excess_kurtosis(summary))
         z = q + (T(1) / T(6)) * (q^2 - T(1)) * S + (T(1) / T(24)) * (q^3 - T(3) * q) * K -
             (T(1) / T(36)) * (T(2) * q^3 - T(5) * q) * (S^2)
-        σ = T(std(returns; corrected=false))
-        iszero(σ) ? μ : μ + z * σ
+        σ = T(moment_standard_deviation(summary))
+        (iszero(σ) ? μ : μ + z * σ, μ)
     else
         throw(
             ArgumentError(

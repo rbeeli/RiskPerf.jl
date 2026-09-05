@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.4.0] – 2026-09-05
+
+### Changed
+
+- Replaced Distributions with StatsFuns for standard-normal quantiles and densities in
+  Gaussian and Cornish-Fisher VaR and expected shortfall, reducing package loading overhead.
+- Removed the unused Dates dependency and test import.
+
+### Tests
+
+- Added BigFloat type-inference checks for Gaussian and Cornish-Fisher VaR and expected shortfall.
+
 ## [0.3.4] – 2026‑07‑30
 
 ### Changed

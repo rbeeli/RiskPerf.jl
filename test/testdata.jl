@@ -1,6 +1,5 @@
 @testsnippet TestData begin
     using Test
-    using Dates
     using Statistics
     using RiskPerf
 

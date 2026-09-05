@@ -53,4 +53,6 @@ end
     returns_big = rand(BigFloat, 16)
     αbig = big(0.05)
     @test @inferred(expected_shortfall(returns_big, αbig)) isa BigFloat
+    @test @inferred(expected_shortfall(returns_big, αbig; method=:gaussian)) isa BigFloat
+    @test @inferred(expected_shortfall(returns_big, αbig; method=:cornish_fisher)) isa BigFloat
 end

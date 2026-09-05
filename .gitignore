@@ -32,3 +32,4 @@ JuliaLocalPreferences.toml
 .vscode/
 
 scratch/
+benchmark/

@@ -25,7 +25,6 @@ function value_at_risk(returns, α; method::Symbol=:historical, multiplier=1.0)
     isempty(returns) && return T(NaN)
 
     αT = T(α)
-    normal = Normal{T}(zero(T), one(T))
     base, μ = if method == :historical
         # empirical quantile for VaR estimation
         (T(quantile(returns, αT)), T(mean(returns)))
@@ -34,14 +33,14 @@ function value_at_risk(returns, α; method::Symbol=:historical, multiplier=1.0)
         summary = moment_summary(returns)
         μ = T(summary.mean)
         σ = T(moment_standard_deviation(summary))
-        (iszero(σ) ? μ : μ + σ * quantile(normal, αT), μ)
+        (iszero(σ) ? μ : μ + σ * norminvcdf(αT), μ)
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # http://www.diva-portal.org/smash/get/diva2:442078/FULLTEXT01.pdf
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
         summary = moment_summary(returns)
         μ = T(summary.mean)
-        q = quantile(normal, αT)
+        q = norminvcdf(αT)
         S = T(moment_skewness(summary))
         K = T(moment_excess_kurtosis(summary))
         z = q + (T(1) / T(6)) * (q^2 - T(1)) * S + (T(1) / T(24)) * (q^3 - T(3) * q) * K -

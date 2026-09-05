@@ -29,7 +29,6 @@ function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=
     isempty(returns) && return T(NaN)
 
     αT = T(α)
-    normal = Normal{T}(zero(T), one(T))
     base, μ = if method == :historical
         tail_count = max(1, Int(ceil(length(returns) * α)))
         tail_boundary = partialsort!(copy(returns), tail_count)
@@ -47,20 +46,20 @@ function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=
         # derivation: http://blog.smaga.ch/expected-shortfall-closed-form-for-normal-distribution/
         summary = moment_summary(returns)
         μ = T(summary.mean)
-        q = quantile(normal, αT)
+        q = norminvcdf(αT)
         σ = T(moment_standard_deviation(summary))
-        (μ - σ * pdf(normal, q) / αT, μ)
+        (μ - σ * normpdf(q) / αT, μ)
     elseif method == :cornish_fisher
         # third/fourth moment adjusted Gaussian distribution fit
         # https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1024151
         summary = moment_summary(returns)
         μ = T(summary.mean)
-        q = quantile(normal, αT)
+        q = norminvcdf(αT)
         S = T(moment_skewness(summary))
         K = T(moment_excess_kurtosis(summary))
         g = q + (T(1) / T(6)) * (q^2 - T(1)) * S + (T(1) / T(24)) * (q^3 - T(3) * q) * K -
             (T(1) / T(36)) * (T(2) * q^3 - T(5) * q) * (S^2)
-        ϕ = pdf(normal, g)
+        ϕ = normpdf(g)
         EG2 =
             -T(1) / αT *
             ϕ *

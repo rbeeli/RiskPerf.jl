@@ -1,7 +1,7 @@
 module RiskPerf
 
 import Statistics: mean, std, quantile
-import Distributions: Normal, pdf
+import StatsFuns: norminvcdf, normpdf
 
 export adjusted_sharpe_ratio,
     capm,

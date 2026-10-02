@@ -22,6 +22,7 @@ pages = [
         "Risk-Adjusted Performance" => "reference/performance.md",
         "Tail Risk And Moments" => "reference/tail_risk.md",
         "Portfolio Risk" => "reference/portfolio.md",
+        "Sample Comparison" => "reference/comparison.md",
     ],
 ]
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0] – 2026-10-02
+
+### Added
+
+- `compare_return_distributions` with `DistributionComparisonConfig`: summaries of a reference and a
+  comparison return sample, circular-block bootstrap bands, random-label two-sample diagnostics,
+  and active-return summaries. Seeded draws use `Xoshiro` and are deterministic, but not
+  bit-compatible with other implementations' generators.
+- `paired_sign_test` with `PairedSignTestResult`: an exact two-sided sign test of paired values.
+
+### Changed
+
+- Require Julia 1.7 for the `Xoshiro` generator.
+
 ## [0.4.0] – 2026-09-05
 
 ### Changed

@@ -2,8 +2,18 @@ module RiskPerf
 
 import Statistics: mean, std, quantile
 import StatsFuns: norminvcdf, normpdf
+import Random: Xoshiro, shuffle!
 
 export adjusted_sharpe_ratio,
+    ActiveReturnSummary,
+    BootstrapBand,
+    DistributionComparison,
+    DistributionComparisonConfig,
+    PairedSignTestResult,
+    PermutationDiagnostic,
+    ReturnDistributionSummary,
+    compare_return_distributions,
+    paired_sign_test,
     capm,
     drawdowns_pct,
     drawdowns_pnl,
@@ -61,5 +71,6 @@ include("upside_potential_ratio.jl")
 include("drawdowns.jl")
 include("calmar_ratio.jl")
 include("risk_contribution.jl")
+include("distribution_comparison.jl")
 
 end # module RiskPerf

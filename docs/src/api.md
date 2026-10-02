@@ -18,6 +18,7 @@ in the Julia REPL with help mode, for example `?sharpe_ratio`,
 - [Tail Risk And Moments](reference/tail_risk.md): skewness, kurtosis, partial
   moments, upside/downside deviations, Value-at-Risk, and Expected Shortfall
 - [Portfolio Risk](reference/portfolio.md): relative risk contribution
+- [Sample Comparison](reference/comparison.md): distribution comparison and paired sign test
 
 ## Function Groups
 
@@ -29,3 +30,4 @@ in the Julia REPL with help mode, for example `?sharpe_ratio`,
 | Benchmark models | `capm`, `jensen_alpha`, `modified_jensen` |
 | Tail risk and moments | `skewness`, `kurtosis`, `lower_partial_moment`, `higher_partial_moment`, `downside_deviation`, `upside_deviation`, `value_at_risk`, `expected_shortfall` |
 | Portfolio risk | `relative_risk_contribution` |
+| Sample comparison | `compare_return_distributions`, `DistributionComparisonConfig`, `paired_sign_test` |

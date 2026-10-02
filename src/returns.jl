@@ -210,12 +210,8 @@ function mean_excess(x::AbstractArray, y::Real)
     n = length(x)
     n == 0 && throw(ArgumentError("mean of empty collection"))
     T = float(promote_type(eltype(x), typeof(y)))
-    s = zero(T)
     Ty = T(y)
-    @inbounds @simd for i in eachindex(x)
-        s += T(x[i]) - Ty
-    end
-    return s / T(n)
+    return _compensated_sum(value -> T(value) - Ty, x, T) / T(n)
 end
 
 """
@@ -232,11 +228,7 @@ function mean_excess(x::AbstractArray, y::AbstractArray)
     n = length(x)
     n == 0 && throw(ArgumentError("mean of empty collection"))
     T = float(promote_type(eltype(x), eltype(y)))
-    s = zero(T)
-    @inbounds @simd for i in eachindex(x, y)
-        s += T(x[i]) - T(y[i])
-    end
-    return s / T(n)
+    return _compensated_sum(((a, b),) -> T(a) - T(b), zip(x, y), T) / T(n)
 end
 
 """
@@ -253,9 +245,9 @@ function std_excess(x::AbstractArray, y::Real; corrected::Bool=true)
     m = mean_excess(x, y)
     Ty = T(y)
     ss = zero(T)
-    @inbounds @simd for i in eachindex(x)
+    @inbounds for i in eachindex(x)
         d = T(x[i]) - Ty - m
-        ss = muladd(d, d, ss)
+        ss += d * d
     end
     return corrected ? (n > 1 ? sqrt(ss / T(n - 1)) : T(NaN)) : sqrt(ss / T(n))
 end
@@ -267,9 +259,9 @@ function std_excess(x::AbstractArray, y::AbstractArray; corrected::Bool=true)
     T = float(promote_type(eltype(x), eltype(y)))
     m = mean_excess(x, y)
     ss = zero(T)
-    @inbounds @simd for i in eachindex(x, y)
+    @inbounds for i in eachindex(x, y)
         d = T(x[i]) - T(y[i]) - m
-        ss = muladd(d, d, ss)
+        ss += d * d
     end
     return corrected ? (n > 1 ? sqrt(ss / T(n - 1)) : T(NaN)) : sqrt(ss / T(n))
 end
@@ -438,11 +430,7 @@ function total_return(returns::AbstractVector; method::Symbol=:simple)
         end
         return total - one(T)
     elseif method == :log
-        sum_logs = zero(T)
-        for r in returns
-            sum_logs += T(r)
-        end
-        return exp(sum_logs) - one(T)
+        return expm1(_compensated_sum(returns, T))
     end
 
     throw(ArgumentError("Invalid method $(method). Use :simple or :log."))
@@ -505,17 +493,9 @@ function cagr(returns::AbstractVector, periods_per_year::Real; method::Symbol=:s
 
     if method == :simple
         # Use log1p for better numerical stability than direct product
-        sum_logs = zero(T)
-        @inbounds for r in returns
-            sum_logs += log1p(T(r))
-        end
-        return exp(sum_logs / T(years)) - one(T)
+        return expm1(_compensated_sum(r -> log1p(T(r)), returns, T) / T(years))
     elseif method == :log
-        sum_logs = zero(T)
-        @inbounds for r in returns
-            sum_logs += T(r)
-        end
-        return exp(sum_logs / T(years)) - one(T)
+        return expm1(_compensated_sum(returns, T) / T(years))
     end
 
     throw(ArgumentError("Invalid method $(method). Use :simple or :log."))
@@ -550,12 +530,7 @@ function annualized_return(returns::AbstractVector, periods_per_year::Real)
         ArgumentError("periods_per_year must be positive and finite (got $(periods_per_year)).")
     )
     T = promote_type(eltype(returns), Float64)
-    s = zero(T)
-    @inbounds for r in returns
-        s += T(r)
-    end
-    μ = s / T(n)
-    μ * T(ppy)
+    _compensated_sum(returns, T) / T(n) * T(ppy)
 end
 
 """

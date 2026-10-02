@@ -1,6 +1,6 @@
 module RiskPerf
 
-import Statistics: mean, std, quantile
+import Statistics: quantile
 import StatsFuns: norminvcdf, normpdf
 import Random: Xoshiro, shuffle!
 
@@ -53,6 +53,7 @@ export adjusted_sharpe_ratio,
     worst_period_return,
     volatility
 
+include("compensated.jl")
 include("returns.jl")
 include("moments.jl")
 include("volatility.jl")

@@ -26,24 +26,22 @@ function _capm(asset_returns, benchmark_returns, risk_free::Real)
     T = promote_type(eltype(asset_returns), eltype(benchmark_returns), typeof(risk_free))
     T = float(T)
     n = length(asset_returns)
-    invn = one(T) / T(n)
 
-    s1 = zero(T)
-    s2 = zero(T)
-    @inbounds @simd for i in eachindex(asset_returns, benchmark_returns)
-        s1 += asset_returns[i] - risk_free
-        s2 += benchmark_returns[i] - risk_free
+    s1, c1, s2, c2 = zero(T), zero(T), zero(T), zero(T)
+    @inbounds for i in eachindex(asset_returns, benchmark_returns)
+        s1, c1 = _compensated_add(s1, c1, T(asset_returns[i] - risk_free))
+        s2, c2 = _compensated_add(s2, c2, T(benchmark_returns[i] - risk_free))
     end
-    μ1 = s1 * invn
-    μ2 = s2 * invn
+    μ1 = (s1 + c1) / T(n)
+    μ2 = (s2 + c2) / T(n)
 
     num = zero(T)
     den = zero(T)
-    @inbounds @simd for i in eachindex(asset_returns, benchmark_returns)
+    @inbounds for i in eachindex(asset_returns, benchmark_returns)
         ai = asset_returns[i] - risk_free
         bi = benchmark_returns[i] - risk_free
-        num = muladd(ai - μ1, bi - μ2, num)
-        den = muladd(bi - μ2, bi - μ2, den)
+        num += (ai - μ1) * (bi - μ2)
+        den += (bi - μ2) * (bi - μ2)
     end
     β = num / den
     α = μ1 - β * μ2
@@ -57,26 +55,24 @@ function _capm(asset_returns, benchmark_returns, risk_free::AbstractVector)
     T = promote_type(eltype(asset_returns), eltype(benchmark_returns), eltype(risk_free))
     T = float(T)
     n = length(asset_returns)
-    invn = one(T) / T(n)
 
-    s1 = zero(T)
-    s2 = zero(T)
-    @inbounds @simd for i in eachindex(asset_returns, benchmark_returns, risk_free)
+    s1, c1, s2, c2 = zero(T), zero(T), zero(T), zero(T)
+    @inbounds for i in eachindex(asset_returns, benchmark_returns, risk_free)
         rf = risk_free[i]
-        s1 += asset_returns[i] - rf
-        s2 += benchmark_returns[i] - rf
+        s1, c1 = _compensated_add(s1, c1, T(asset_returns[i] - rf))
+        s2, c2 = _compensated_add(s2, c2, T(benchmark_returns[i] - rf))
     end
-    μ1 = s1 * invn
-    μ2 = s2 * invn
+    μ1 = (s1 + c1) / T(n)
+    μ2 = (s2 + c2) / T(n)
 
     num = zero(T)
     den = zero(T)
-    @inbounds @simd for i in eachindex(asset_returns, benchmark_returns, risk_free)
+    @inbounds for i in eachindex(asset_returns, benchmark_returns, risk_free)
         rf = risk_free[i]
         ai = asset_returns[i] - rf
         bi = benchmark_returns[i] - rf
-        num = muladd(ai - μ1, bi - μ2, num)
-        den = muladd(bi - μ2, bi - μ2, den)
+        num += (ai - μ1) * (bi - μ2)
+        den += (bi - μ2) * (bi - μ2)
     end
     β = num / den
     α = μ1 - β * μ2

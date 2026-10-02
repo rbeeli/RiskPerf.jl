@@ -13,20 +13,21 @@ function moment_summary(x)
         return MomentSummary(nan, nan, nan, nan)
     end
 
-    μ = T(mean(x))
+    μ = _compensated_mean(x, T)
     s2 = zero(T)
     s3 = zero(T)
+    c3 = zero(T)
     s4 = zero(T)
-    @inbounds @simd for i in eachindex(x)
+    @inbounds for i in eachindex(x)
         value = T(x[i])
         difference = value - μ
         squared_difference = difference * difference
         s2 += squared_difference
-        s3 += squared_difference * difference
+        s3, c3 = _compensated_add(s3, c3, squared_difference * difference)
         s4 += squared_difference * squared_difference
     end
     count = T(n)
-    MomentSummary(μ, s2 / count, s3 / count, s4 / count)
+    MomentSummary(μ, s2 / count, (s3 + c3) / count, s4 / count)
 end
 
 moment_standard_deviation(summary::MomentSummary) = sqrt(summary.variance)
@@ -57,17 +58,19 @@ function skewness(x; method::Symbol=:moment)
     n = length(x)
     T = float(eltype(x))
     n == 0 && return T(NaN)
-    μ = T(mean(x))
+    μ = _compensated_mean(x, T)
     # Two-pass accumulation to avoid temporaries
     s2 = zero(T)
     s3 = zero(T)
-    @inbounds @simd for i in eachindex(x)
+    c3 = zero(T)
+    @inbounds for i in eachindex(x)
         xi = T(x[i])
         d = xi - μ
         d2 = d * d
         s2 += d2
-        s3 += d2 * d
+        s3, c3 = _compensated_add(s3, c3, d2 * d)
     end
+    s3 += c3
     tn = T(n)
     m2 = s2 / tn
     m3 = s3 / tn
@@ -119,10 +122,10 @@ function kurtosis(x; method::Symbol=:excess)
     n == 0 && return T(NaN)
     tn = T(n)
     if method == :cornish_fisher
-        μ = T(mean(x))
+        μ = _compensated_mean(x, T)
         s2 = zero(T)
         s4 = zero(T)
-        @inbounds @simd for xi in x
+        @inbounds for xi in x
             val = T(xi)
             d = val - μ
             d2 = d * d
@@ -135,10 +138,10 @@ function kurtosis(x; method::Symbol=:excess)
         adj = m4 / (m2^2) - (T(3) * T(n - 1)) / T(n + 1)
         return num * adj / (T(n - 2) * T(n - 3))
     elseif method == :moment || method == :excess
-        μ = T(mean(x))
+        μ = _compensated_mean(x, T)
         s2 = zero(T)
         s4 = zero(T)
-        @inbounds @simd for xi in x
+        @inbounds for xi in x
             val = T(xi)
             d = val - μ
             d2 = d * d
@@ -184,7 +187,7 @@ function lower_partial_moment(returns::AbstractVector, threshold::Real, n, metho
         denom = length(returns)
         denom == 0 && return zero(T)
         s = zero(T)
-        @inbounds @simd for ri in returns
+        @inbounds for ri in returns
             d = thr - T(ri)
             if d > 0
                 s += d^n
@@ -238,7 +241,7 @@ function lower_partial_moment(returns::AbstractVector, threshold::AbstractVector
         denom = length(returns)
         denom == 0 && return zero(T)
         s = zero(T)
-        @inbounds @simd for i in eachindex(returns, threshold)
+        @inbounds for i in eachindex(returns, threshold)
             d = T(threshold[i]) - T(returns[i])
             if d > 0
                 s += d^n
@@ -291,7 +294,7 @@ function higher_partial_moment(returns::AbstractVector, threshold::Real, n, meth
         denom = length(returns)
         denom == 0 && return zero(T)
         s = zero(T)
-        @inbounds @simd for ri in returns
+        @inbounds for ri in returns
             d = T(ri) - thr
             if d > 0
                 s += d^n
@@ -347,7 +350,7 @@ function higher_partial_moment(
         denom = length(returns)
         denom == 0 && return zero(T)
         s = zero(T)
-        @inbounds @simd for i in eachindex(returns, threshold)
+        @inbounds for i in eachindex(returns, threshold)
             d = T(returns[i]) - T(threshold[i])
             if d > 0
                 s += d^n

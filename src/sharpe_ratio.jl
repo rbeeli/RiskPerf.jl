@@ -21,7 +21,7 @@ Calculates the Sharpe Ratio (SR) according to the original definition by William
 - Sharpe, William F. (1994). The Sharpe Ratio. The Journal of Portfolio Management.
 """
 @inline sharpe_ratio(returns; multiplier=1.0, risk_free=0.0) =
-    mean_excess(returns, risk_free) / std(returns) * sqrt(multiplier)
+    mean_excess(returns, risk_free) / _standard_deviation(returns) * sqrt(multiplier)
 
 """
     adjusted_sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
@@ -44,8 +44,11 @@ Calculates the adjusted Sharpe Ratio introduced by Pezier and White (2006) by pe
 """
 function adjusted_sharpe_ratio(returns; multiplier=1.0, risk_free=0.0)
     excess = returns .- risk_free
-    SR = mean(excess) / std(excess)
-    S = skewness(excess)
-    K = kurtosis(excess; method=:excess)
-    SR * (1 + (S / 6)SR - K / 24 * SR^2) * sqrt(multiplier)
+    summary = moment_summary(excess)
+    n = length(excess)
+    deviation = n > 1 ? sqrt(summary.variance * n / (n - 1)) : oftype(summary.variance, NaN)
+    SR = summary.mean / deviation
+    S = moment_skewness(summary)
+    K = moment_excess_kurtosis(summary)
+    SR * (1 + S / 6 * SR - K / 24 * SR^2) * sqrt(multiplier)
 end

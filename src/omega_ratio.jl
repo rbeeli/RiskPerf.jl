@@ -17,7 +17,7 @@ Note that the ratio returns `Inf` if all returns are greater or equal to the tar
     gains = zero(T)
     losses = zero(T)
     tr = T(target_return)
-    @inbounds @simd for r in returns
+    @inbounds for r in returns
         d = T(r) - tr
         if d >= 0
             gains += d
@@ -48,7 +48,7 @@ Note that the ratio returns `Inf` if all returns are greater or equal to the tar
     T = float(promote_type(eltype(returns), eltype(target_return)))
     gains = zero(T)
     losses = zero(T)
-    @inbounds @simd for i in eachindex(returns, target_return)
+    @inbounds for i in eachindex(returns, target_return)
         d = T(returns[i]) - T(target_return[i])
         if d >= 0
             gains += d

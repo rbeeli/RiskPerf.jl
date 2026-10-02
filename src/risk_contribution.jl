@@ -17,5 +17,5 @@ such that ``\\sum_{i=1}^N \\text{RRC}_i = 1``.
 @inline function relative_risk_contribution(weights, covariance_matrix)
     v = covariance_matrix * weights
     rc = v .* weights
-    rc ./ sum(rc)
+    rc ./ _compensated_sum(rc, float(eltype(rc)))
 end

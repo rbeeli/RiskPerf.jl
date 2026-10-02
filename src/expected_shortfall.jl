@@ -30,18 +30,9 @@ function expected_shortfall(returns, α; method::Symbol=:historical, multiplier=
 
     αT = T(α)
     base, μ = if method == :historical
-        tail_count = max(1, Int(ceil(length(returns) * α)))
-        tail_boundary = partialsort!(copy(returns), tail_count)
-        values_below_boundary = 0
-        tail_sum = zero(T)
-        for value in returns
-            if isless(value, tail_boundary)
-                tail_sum += T(value)
-                values_below_boundary += 1
-            end
-        end
-        tail_sum += T(tail_boundary) * T(tail_count - values_below_boundary)
-        (tail_sum / T(tail_count), T(mean(returns)))
+        tail_count = min(max(1, Int(ceil(length(returns) * α))), length(returns))
+        tail = partialsort!(collect(returns), 1:tail_count)
+        (_compensated_mean(tail, T), _compensated_mean(returns, T))
     elseif method == :gaussian
         # derivation: http://blog.smaga.ch/expected-shortfall-closed-form-for-normal-distribution/
         summary = moment_summary(returns)

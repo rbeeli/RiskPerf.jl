@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.5.1] – 2026-10-02
+
+### Changed
+
+- First-order sums use Neumaier compensated summation: means, excess means, log-return totals,
+  CAGR and annualized return, the third central moment, CAPM means, the historical
+  expected-shortfall tail mean, and the risk-contribution total. Sums of squares and fourth powers
+  are plain sequential sums; summation loops no longer use `@simd`, so results do not depend on the
+  vector width.
+- Log-return totals and CAGR use `expm1`, and CAPM covariance terms are no longer fused
+  (`muladd`). Results may differ from 0.5.0 in the last digits.
+
 ## [0.5.0] – 2026-10-02
 
 ### Added

@@ -27,7 +27,7 @@ function value_at_risk(returns, α; method::Symbol=:historical, multiplier=1.0)
     αT = T(α)
     base, μ = if method == :historical
         # empirical quantile for VaR estimation
-        (T(quantile(returns, αT)), T(mean(returns)))
+        (T(quantile(returns, αT)), _compensated_mean(returns, T))
     elseif method == :gaussian
         # parametric Gaussian distribution fit
         summary = moment_summary(returns)
